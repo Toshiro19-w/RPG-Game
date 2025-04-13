@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      player_up_attack2_0: 3610479071361574158
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

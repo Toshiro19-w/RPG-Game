@@ -309,7 +309,15 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      moon_0: 9083969447635318612
+      moon_1: -5679657590885005731
+      moon_2: -1825352000054201894
+      moon_3: -6130851942531297651
+      moon_4: -4894877219555033837
+      moon_5: -7591269622283923513
+      moon_6: 6901942967387306250
+      moon_7: -7857193861968469892
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
