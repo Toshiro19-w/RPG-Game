@@ -1,0 +1,16 @@
+Yêu cầu:
++ Game RPG, có 2 chế độ chơi (từng màn, infinity)
++ Tại lobby, nhân vật sẽ di chuyển tới địa điểm A để chơi chế độ từng màn, di chuyển đến địa điểm B để chơi infinity, di chuyển đến điểm C để trang bị skill tấn công, di chuyển đến địa điểm D để trang bị skill hỗ trợ, di chuyển đến địa điểm E để nâng cấp kỹ năng skill
++ Skill tấn công:
+	+ Đánh thường (space)
+	+ Skill 1: (Q)
+	+ Skill 2: (E)
+	+ Các skill tấn công: đánh thường, bắn 1 mũi tên băng, bắn 3 mũi tên băng, bắn 1 vầng sáng đi xuyên vật thể, tạo ra 1 vùng gây sát thương dưới chân người chơi.
++ Skill hỗ trợ:
+	+ Skill 1: (F)
+	+ Skill 2: (R)
+	+ Các skill hỗ trợ: tốc biến, hồi máu, tăng tốc chạy trong khoảng 1 thời gian.
++ Các nút di chuyển (W,A,S,D)
++ Các skill đều có định hướng theo chuột.
+
+
