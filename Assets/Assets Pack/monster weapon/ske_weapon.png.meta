@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      ske_weapon_0: -7022608506359635055
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,0 +1,10 @@
+{
+    "asset": "633e77fbcf2f0654ca076edb87de0829",
+    "fileName": "0197c4e5-8ffa-70c3-bffd-02e95b002016.pose.json",
+    "prompt": "Animation của nhân vật player chạy lên, xuống, trái, phải trong một tựa game top-down RPG",
+    "negativePrompt": "",
+    "model": "a9c27ca4-3ec9-43e8-96cd-ee891aba64c5",
+    "modelName": "Text to Motion",
+    "customSeed": 1773678020,
+    "w3CTraceId": "0c8b45e478ec25fe1406a41c101ff152"
+}
