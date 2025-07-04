@@ -131,7 +131,7 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 0532cf889f9882247afa0d6c8a477cdf
-      internalID: -574160024
+      internalID: 2939364227747813048
       vertices: []
       indices: 
       edges: []
@@ -149,7 +149,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      player_L_attack2_1: 2939364227747813048
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
