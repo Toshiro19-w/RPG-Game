@@ -6,6 +6,8 @@ public class PlayerMovement : MonoBehaviour
     private Animator animator;
     private Rigidbody2D rb;
     private Vector2 movement;
+    private PlayerCombat playerCombat;
+    private bool canMove = true;
 
     public float getSpeed()
     {
@@ -17,22 +19,41 @@ public class PlayerMovement : MonoBehaviour
         speed = newSpeed;
     }
 
+    public void StopMovement()
+    {
+        canMove = false;
+        movement = Vector2.zero;
+        animator.SetBool("isMoving", false);
+    }
+
+    public void ResumeMovement()
+    {
+        canMove = true;
+    }
+
     void Start()
     {
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = 0; // Khoá trọng lực trục Y
-        rb.constraints = RigidbodyConstraints2D.FreezeRotation; // Không cho xoay
+        playerCombat = GetComponent<PlayerCombat>();
+        rb.gravityScale = 0;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
 
     void Update()
     {
-        movement.x = Input.GetAxisRaw("Horizontal");
-        movement.y = Input.GetAxisRaw("Vertical");
+        if (!canMove || (playerCombat != null && playerCombat.IsAttacking()))
+        {
+            movement = Vector2.zero;
+        }
+        else
+        {
+            movement.x = Input.GetAxisRaw("Horizontal");
+            movement.y = Input.GetAxisRaw("Vertical");
 
-        // Giảm tốc độ khi di chuyển chéo
-        if (movement.x != 0 && movement.y != 0)
-            movement *= 0.7071f;
+            if (movement.x != 0 && movement.y != 0)
+                movement *= 0.7071f;
+        }
 
         Animate();
     }

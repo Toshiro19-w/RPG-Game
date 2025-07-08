@@ -118,10 +118,10 @@ TextureImporter:
       name: player_R_attack2_0
       rect:
         serializedVersion: 2
-        x: 3
-        y: 5
-        width: 52
-        height: 48
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -136,121 +136,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: player_R_attack2_1
-      rect:
-        serializedVersion: 2
-        x: 51
-        y: 13
-        width: 10
-        height: 12
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 8b9072fe942fe91d0800000000000000
-      internalID: -3341967474103481928
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: player_R_attack2_2
-      rect:
-        serializedVersion: 2
-        x: 53
-        y: 25
-        width: 8
-        height: 8
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7fcfdcc0ab8afa4a0800000000000000
-      internalID: -6579855013532795657
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: player_R_attack2_3
-      rect:
-        serializedVersion: 2
-        x: 59
-        y: 21
-        width: 5
-        height: 8
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d78552c43075a7e10800000000000000
-      internalID: 2196163439970572413
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: player_R_attack2_4
-      rect:
-        serializedVersion: 2
-        x: 55
-        y: 7
-        width: 8
-        height: 8
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 072505e169a45e900800000000000000
-      internalID: 713058124622221936
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: player_R_attack2_5
-      rect:
-        serializedVersion: 2
-        x: 59
-        y: 13
-        width: 5
-        height: 8
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4ac90fb221c7cfee0800000000000000
-      internalID: -1225968581063172956
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: a487caf544b8b5e4c9134c8c7957b1ee
     internalID: 0
     vertices: []
     indices: 
@@ -258,14 +148,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       player_R_attack2_0: 8042443993630009139
-      player_R_attack2_1: -3341967474103481928
-      player_R_attack2_2: -6579855013532795657
-      player_R_attack2_3: 2196163439970572413
-      player_R_attack2_4: 713058124622221936
-      player_R_attack2_5: -1225968581063172956
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

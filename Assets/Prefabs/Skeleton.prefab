@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1644554266648772709}
   - component: {fileID: 5268774081320220481}
   - component: {fileID: 2106062263193464978}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FirePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -111,9 +111,10 @@ GameObject:
   - component: {fileID: 3105118405153920900}
   - component: {fileID: 9185474285791858602}
   - component: {fileID: 3269158327504619061}
-  m_Layer: 0
+  - component: {fileID: 4325204196602894606}
+  m_Layer: 6
   m_Name: Skeleton
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -156,10 +157,10 @@ SpriteRenderer:
   m_SmallMeshCulling: 1
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -179,7 +180,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 1784253849
-  m_SortingLayer: 1
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -964824239653993824, guid: d4b46cb9148a63b4097411cd9d4fbdd5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -310,3 +311,17 @@ MonoBehaviour:
   fireRate: 2
   fireSpeed: 10
   bulletLifetime: 5
+--- !u!114 &4325204196602894606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4266600551737224889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4c7684872a0f8749ba958ac45d36c33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  maxHealth: 100
+  deathEffect: {fileID: 3188832101877415259}
