@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Enemy
+  - Wall
   layers:
   - Default
   - TransparentFX
@@ -12,13 +14,13 @@ TagManager:
   - Water
   - UI
   - Enemy
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Wall
+  - Floor
+  - Player
+  - Background
+  - PlayerProjectile
+  - EnemyProjectile
+  - Neutral
   - 
   - 
   - 
@@ -41,8 +43,26 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Enemy
+  - name: Background
+    uniqueID: 640082979
+    locked: 0
+  - name: Floor
+    uniqueID: 3953680611
+    locked: 0
+  - name: Wall
+    uniqueID: 3837759409
+    locked: 0
+  - name: Characters
     uniqueID: 1784253849
+    locked: 0
+  - name: Projectiles
+    uniqueID: 1201903963
+    locked: 0
+  - name: Effects
+    uniqueID: 1669954149
+    locked: 0
+  - name: UI
+    uniqueID: 1972528879
     locked: 0
   m_RenderingLayers:
   - Default

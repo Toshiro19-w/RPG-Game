@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 6606868059079985667}
   - component: {fileID: 477739958127474176}
   - component: {fileID: 7366276566585628252}
-  - component: {fileID: 315316859859445916}
-  m_Layer: 0
+  - component: {fileID: 8480461640460188059}
+  m_Layer: 9
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -59,10 +59,10 @@ SpriteRenderer:
   m_SmallMeshCulling: 1
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -81,15 +81,15 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingLayerID: 1784253849
+  m_SortingLayer: 4
+  m_SortingOrder: 0
   m_Sprite: {fileID: 4368409534826075972, guid: 3ffa0a69c70032544b3d8fcf5a7c98e3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.65625, y: 0.6875}
+  m_Size: {x: 0.4375, y: 0.75}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -156,8 +156,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0019315084, y: 0.015965581}
-  m_Size: {x: 0.2606964, y: 0.44806886}
+  m_Offset: {x: -0.0071840286, y: -0.003293991}
+  m_Size: {x: 0.32723045, y: 0.6266594}
   m_Direction: 0
 --- !u!95 &477739958127474176
 Animator:
@@ -194,7 +194,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   speed: 8
---- !u!114 &315316859859445916
+--- !u!114 &8480461640460188059
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -203,12 +203,43 @@ MonoBehaviour:
   m_GameObject: {fileID: 3665457269201043474}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd576b2a24628854aa8c73f38eefda97, type: 3}
+  m_Script: {fileID: 11500000, guid: 4f9dad79b408e554ba394689e66f7a4d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
+  flashDistance: 5
+  flashCooldown: 60
+  flashKey: 102
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  meleeProjectilePrefab: {fileID: 6701745802591646764, guid: 72a0357b2c9be4d488052ba2997966e0, type: 3}
+  meleeCooldown: 0.25
+  meleeKey: 32
+  meleeProjectileSpeed: 10
+  iceArrowPrefab: {fileID: 6701745802591646764, guid: 820cf1f9ee7ffbe40ad7ba0757d70506, type: 3}
+  fireballPrefab: {fileID: 6701745802591646764, guid: 1421b63ffc606ba4095a188827913ee8, type: 3}
+  fireWallPrefab: {fileID: 6340004415637952062, guid: a0056bbb22e079b448199584c87d2a3d, type: 3}
+  projectiles:
+  - prefab: {fileID: 0}
+    speed: 8
+    cooldown: 2
+    key: 101
+  - prefab: {fileID: 0}
+    speed: 10
+    cooldown: 1
+    key: 113
+  - prefab: {fileID: 0}
+    speed: 12
+    cooldown: 4
+    key: 114
+  - prefab: {fileID: 0}
+    speed: 0
+    cooldown: 6
+    key: 116
+  iceBarrageCount: 7
+  iceBarrageSpread: 45
+  fireWallCount: 5
+  fireWallSpacing: 1
+  fireWallDuration: 3
   animator: {fileID: 477739958127474176}
-  mainCamera: {fileID: 0}
-  attackInterval: 0.5
-  delayAttackTime: 0.2
-  attackSpeed: 5
-  playerMovement: {fileID: 7366276566585628252}
+  attackAnimationDuration: 0.25
