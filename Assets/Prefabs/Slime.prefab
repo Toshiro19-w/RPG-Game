@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 3220697007460155409}
   - component: {fileID: 7368578712594522028}
   - component: {fileID: 5371188353708824849}
+  - component: {fileID: 2466006899577522445}
+  - component: {fileID: -763842905065880929}
   m_Layer: 0
   m_Name: Slime
   m_TagString: Untagged
@@ -195,3 +197,32 @@ MonoBehaviour:
   moveSpeed: 2.5
   detectionRange: 10
   stoppingDistance: 1.5
+--- !u!114 &2466006899577522445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4105822651574767691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d07eb23158ed88a4388b6c9594b4a497, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffect
+--- !u!114 &-763842905065880929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4105822651574767691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4c7684872a0f8749ba958ac45d36c33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  maxHealth: 100
+  deathEffect: {fileID: 0}
+  damageIndicatorPrefab: {fileID: 8465790614685884788, guid: 52ca933b0187800458f4ea4b297c5433, type: 3}
+  invincibilityDuration: 0.2
+  spriteRenderer: {fileID: 0}

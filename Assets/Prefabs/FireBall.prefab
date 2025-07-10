@@ -198,8 +198,12 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 128
-  hitEffect: {fileID: 0}
+  hitEffect: {fileID: 6657066482150875671, guid: 554bba1560688154da8d74e7a3e610ba, type: 3}
   piercing: 0
+  projectileType: 1
+  knockbackForce: 5
+  slowPercent: 0
+  slowDuration: 0
   rotateWhileFlying: 0
   rotationSpeed: 180
   pulseEffect: 0

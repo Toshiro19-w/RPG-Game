@@ -171,6 +171,15 @@ public class PlayerCombat : MonoBehaviour
                 
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             projectile.transform.rotation = Quaternion.Euler(0, 0, angle);
+            
+            // Set projectile type for special effects
+            if (projectile.TryGetComponent<ProjectileScript>(out var projScript))
+            {
+                if (animationTrigger.Contains("Fire"))
+                    projScript.SetProjectileType(ProjectileScript.ProjectileType.Fireball);
+                else if (animationTrigger.Contains("Ice"))
+                    projScript.SetProjectileType(ProjectileScript.ProjectileType.IceArrow);
+            }
         }
 
         yield return new WaitForSeconds(attackAnimationDuration);
@@ -215,6 +224,10 @@ public class PlayerCombat : MonoBehaviour
                     projectileRb.linearVelocity = shootDirection * projectileSpeed;
                     
                 projectile.transform.rotation = Quaternion.Euler(0, 0, currentAngle);
+                
+                // Set ice arrow type for slow effect
+                if (projectile.TryGetComponent<ProjectileScript>(out var projScript))
+                    projScript.SetProjectileType(ProjectileScript.ProjectileType.IceArrow);
             }
         }
 
@@ -249,6 +262,11 @@ public class PlayerCombat : MonoBehaviour
             {
                 Vector2 spawnPos = startPos + (perpendicular * fireWallSpacing * i);
                 GameObject fireWall = Instantiate(fireWallPrefab, spawnPos, Quaternion.identity);
+                
+                // Set fire wall type for slow effect
+                if (fireWall.TryGetComponent<ProjectileScript>(out var projScript))
+                    projScript.SetProjectileType(ProjectileScript.ProjectileType.FireWall);
+                    
                 Destroy(fireWall, fireWallDuration);
             }
         }

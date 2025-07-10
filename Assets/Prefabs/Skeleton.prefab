@@ -112,6 +112,7 @@ GameObject:
   - component: {fileID: 9185474285791858602}
   - component: {fileID: 3269158327504619061}
   - component: {fileID: 4325204196602894606}
+  - component: {fileID: 5787017505984293451}
   m_Layer: 6
   m_Name: Skeleton
   m_TagString: Enemy
@@ -324,4 +325,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   maxHealth: 100
-  deathEffect: {fileID: 3188832101877415259}
+  deathEffect: {fileID: 3467868008111179475, guid: 675a1f232bc31f342b9bd917fe3a6048, type: 3}
+  damageIndicatorPrefab: {fileID: 8465790614685884788, guid: 52ca933b0187800458f4ea4b297c5433, type: 3}
+  invincibilityDuration: 0.2
+  spriteRenderer: {fileID: 0}
+--- !u!114 &5787017505984293451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4266600551737224889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d07eb23158ed88a4388b6c9594b4a497, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffect

@@ -9,6 +9,20 @@ public class ProjectileScript : MonoBehaviour
     [SerializeField] private GameObject hitEffect;
     [SerializeField] private bool piercing = false;
     
+    [Header("Special Effects")]
+    [SerializeField] private ProjectileType projectileType = ProjectileType.Normal;
+    [SerializeField] private float knockbackForce = 5f;
+    [SerializeField] private float slowPercent = 0.5f;
+    [SerializeField] private float slowDuration = 2f;
+    
+    public enum ProjectileType
+    {
+        Normal,
+        Fireball,
+        IceArrow,
+        FireWall
+    }
+    
     [Header("Visual Effects")]
     [SerializeField] private bool rotateWhileFlying = true;
     [SerializeField] private float rotationSpeed = 360f;
@@ -51,19 +65,54 @@ public class ProjectileScript : MonoBehaviour
     
     private void DealDamage(Collider2D target)
     {
-        // Try different damage interfaces
+        // Apply damage
         if (target.TryGetComponent<IDamageable>(out var damageable))
             damageable.TakeDamage(damage);
         else if (target.TryGetComponent<EnemyHealth>(out var enemyHealth))
             enemyHealth.TakeDamage(damage);
         else
-            Destroy(target.gameObject); // Fallback
+            Destroy(target.gameObject);
+        
+        // Apply special effects
+        ApplySpecialEffects(target);
+    }
+    
+    private void ApplySpecialEffects(Collider2D target)
+    {
+        if (!target.TryGetComponent<StatusEffect>(out var statusEffect))
+            return;
+            
+        switch (projectileType)
+        {
+            case ProjectileType.Fireball:
+                Vector2 knockDirection = (target.transform.position - transform.position).normalized;
+                statusEffect.ApplyKnockback(knockDirection, knockbackForce);
+                break;
+                
+            case ProjectileType.IceArrow:
+            case ProjectileType.FireWall:
+                statusEffect.ApplySlow(slowPercent, slowDuration);
+                break;
+        }
+    }
+    
+    public void SetProjectileType(ProjectileType type)
+    {
+        projectileType = type;
     }
     
     private void DestroyProjectile()
     {
         if (hitEffect != null)
-            Instantiate(hitEffect, transform.position, transform.rotation);
+        {
+            GameObject effect = Instantiate(hitEffect, transform.position, transform.rotation);
+            
+            // Add explosion effect if it has the component
+            if (effect.TryGetComponent<ExplosionEffect>(out var explosion))
+            {
+                // Explosion will handle damage automatically
+            }
+        }
             
         Destroy(gameObject);
     }
