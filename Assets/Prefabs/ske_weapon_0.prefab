@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5996877580282575573}
   - component: {fileID: 7621331570989615077}
   - component: {fileID: 5971071343669545356}
+  - component: {fileID: 9116011852704024642}
   m_Layer: 12
   m_Name: ske_weapon_0
   m_TagString: Untagged
@@ -156,3 +157,32 @@ CapsuleCollider2D:
   m_Offset: {x: -0.0033645034, y: 0.0058879256}
   m_Size: {x: 0.67701006, y: 0.69551504}
   m_Direction: 0
+--- !u!114 &9116011852704024642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1317231576205026155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03dd8843620d92f409ad157979479d47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileScript
+  damage: 10
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  hitEffect: {fileID: 0}
+  piercing: 0
+  projectileType: 0
+  knockbackForce: 0
+  slowPercent: 0
+  slowDuration: 0
+  rotateWhileFlying: 0
+  rotationSpeed: 180
+  pulseEffect: 0
+  pulseSpeed: 2

@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 477739958127474176}
   - component: {fileID: 7366276566585628252}
   - component: {fileID: 8480461640460188059}
+  - component: {fileID: 4386692385429736368}
   m_Layer: 9
   m_Name: Player
   m_TagString: Player
@@ -243,3 +244,20 @@ MonoBehaviour:
   fireWallDuration: 3
   animator: {fileID: 477739958127474176}
   attackAnimationDuration: 0.25
+--- !u!114 &4386692385429736368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3665457269201043474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3adf70aaa0ed21489c2044b16f7887e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  maxHealth: 100
+  deathEffect: {fileID: 0}
+  damageIndicatorPrefab: {fileID: 8465790614685884788, guid: 52ca933b0187800458f4ea4b297c5433, type: 3}
+  invincibilityDuration: 0.5
+  spriteRenderer: {fileID: 0}

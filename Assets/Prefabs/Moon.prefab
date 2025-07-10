@@ -164,6 +164,10 @@ MonoBehaviour:
     m_Bits: 128
   hitEffect: {fileID: 0}
   piercing: 0
+  projectileType: 0
+  knockbackForce: 1.5
+  slowPercent: 0
+  slowDuration: 0
   rotateWhileFlying: 0
   rotationSpeed: 180
   pulseEffect: 0

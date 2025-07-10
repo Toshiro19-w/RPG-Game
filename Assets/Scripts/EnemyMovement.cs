@@ -85,10 +85,20 @@ public class EnemyMovement : MonoBehaviour
     {
         return hasSpottedPlayer; // Trả về trạng thái phát hiện người chơi
     }
-    
+
     public Transform GetPlayerTransform()
     {
         return player; // Trả về vị trí của người chơi
+    }
+
+    public float GetSpeed()
+    {
+        return moveSpeed; // Trả về tốc độ di chuyển của Enemy
+    }
+
+    public void SetSpeed(float newSpeed)
+    {
+        moveSpeed = newSpeed; // Cập nhật tốc độ di chuyển của Enemy
     }
 
 }
