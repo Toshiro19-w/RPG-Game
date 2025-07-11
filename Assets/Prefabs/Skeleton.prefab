@@ -110,9 +110,9 @@ GameObject:
   - component: {fileID: 1198378813750893516}
   - component: {fileID: 3105118405153920900}
   - component: {fileID: 9185474285791858602}
-  - component: {fileID: 3269158327504619061}
   - component: {fileID: 4325204196602894606}
   - component: {fileID: 5787017505984293451}
+  - component: {fileID: 4700903113718440419}
   m_Layer: 6
   m_Name: Skeleton
   m_TagString: Enemy
@@ -295,23 +295,11 @@ MonoBehaviour:
   moveSpeed: 2
   detectionRange: 10
   stoppingDistance: 1
---- !u!114 &3269158327504619061
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4266600551737224889}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94ddc82e31552814da1cdac4acd0bb29, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SkeletonAttack
-  bulletPrefab: {fileID: 1317231576205026155, guid: 48c9f5b11c06cc74cab2c4c741375f29, type: 3}
-  firePoint: {fileID: 1644554266648772709}
-  fireRate: 2
-  fireSpeed: 10
-  bulletLifetime: 5
+  wallLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  wallCheckDistance: 0.5
+  wallCheckPoint: {fileID: 0}
 --- !u!114 &4325204196602894606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -341,3 +329,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d07eb23158ed88a4388b6c9594b4a497, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatusEffect
+--- !u!114 &4700903113718440419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4266600551737224889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94ddc82e31552814da1cdac4acd0bb29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkeletonAttack
+  bulletPrefab: {fileID: 1317231576205026155, guid: 48c9f5b11c06cc74cab2c4c741375f29, type: 3}
+  firePoint: {fileID: 1644554266648772709}
+  fireRate: 1
+  fireSpeed: 5
+  bulletLifetime: 5
+  shootingRange: 5
