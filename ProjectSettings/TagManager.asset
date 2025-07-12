@@ -21,7 +21,7 @@ TagManager:
   - PlayerProjectile
   - EnemyProjectile
   - Neutral
-  - 
+  - nextMap
   - 
   - 
   - 
@@ -51,6 +51,9 @@ TagManager:
     locked: 0
   - name: Wall
     uniqueID: 3837759409
+    locked: 0
+  - name: nextMap
+    uniqueID: 3847338039
     locked: 0
   - name: Characters
     uniqueID: 1784253849
