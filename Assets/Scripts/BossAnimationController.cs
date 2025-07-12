@@ -7,6 +7,7 @@ public class BossAnimationController : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private string shootingAnimationTrigger = "Shooting";
     [SerializeField] private string idleAnimationTrigger = "Idle";
+    [SerializeField] private string stompingAnimationTrigger = "Stomping"; // Thêm trigger cho stomping
     
     [Header("Shooting Detection")]
     [SerializeField] private float shootingAnimationDuration = 1f; // Thời gian animation bắn
@@ -14,6 +15,7 @@ public class BossAnimationController : MonoBehaviour
     private EnemyMovement enemyMovement;
     private SkeletonAttack skeletonAttack;
     private BossAttack bossAttack; // Thêm hỗ trợ cho BossAttack
+    private BossStompingAttack bossStompingAttack; // Thêm hỗ trợ cho BossStompingAttack
     private bool isShooting = false;
     private bool isInShootingRange = false;
     
@@ -26,6 +28,7 @@ public class BossAnimationController : MonoBehaviour
         enemyMovement = GetComponent<EnemyMovement>();
         skeletonAttack = GetComponent<SkeletonAttack>();
         bossAttack = GetComponent<BossAttack>();
+        bossStompingAttack = GetComponent<BossStompingAttack>(); // Lấy BossStompingAttack component
         
         // Kiểm tra các components quan trọng
         if (animator == null)
@@ -47,6 +50,12 @@ public class BossAnimationController : MonoBehaviour
     private void CheckShootingState()
     {
         if (enemyMovement == null || animator == null) return;
+        
+        // Kiểm tra nếu đang stomping, không làm gì cả
+        if (bossStompingAttack != null && bossStompingAttack.IsStomping())
+        {
+            return; // Không xử lý shooting khi đang stomping
+        }
         
         // Kiểm tra xem người chơi còn sống không
         if (!IsPlayerAlive())
@@ -106,6 +115,11 @@ public class BossAnimationController : MonoBehaviour
         else if (skeletonAttack != null)
         {
             return true; // SkeletonAttack bắn liên tục khi trong tầm
+        }
+        // Kiểm tra BossStompingAttack
+        else if (bossStompingAttack != null)
+        {
+            return bossStompingAttack.IsStomping(); // Giả định có phương thức IsStomping trong BossStompingAttack
         }
         
         return false;
@@ -274,19 +288,43 @@ public class BossAnimationController : MonoBehaviour
         StopShootingAnimation();
     }
     
+    // Stomping related methods
+    public bool IsStomping()
+    {
+        return bossStompingAttack != null && bossStompingAttack.IsStomping();
+    }
+    
+    public void TriggerStompingAnimation()
+    {
+        if (animator != null)
+        {
+            animator.SetTrigger(stompingAnimationTrigger);
+            animator.SetBool("isStomping", true);
+        }
+    }
+    
+    public void StopStompingAnimation()
+    {
+        if (animator != null)
+        {
+            animator.SetBool("isStomping", false);
+        }
+    }
+    
     // Debug visualization
     void OnDrawGizmosSelected()
     {
         if (enemyMovement != null)
         {
             float shootingRange = GetShootingRange();
+            // Màu cyan cho animation controller range
             Gizmos.color = Color.cyan;
             Gizmos.DrawWireSphere(transform.position, shootingRange);
             
-            // Hiển thị trạng thái hiện tại
+            // Hiển thị trạng thái hiện tại - Màu cam cho trạng thái bắn
             if (isShooting)
             {
-                Gizmos.color = Color.red;
+                Gizmos.color = Color.yellow;
                 Gizmos.DrawWireCube(transform.position + Vector3.up * 2f, Vector3.one * 0.5f);
             }
         }

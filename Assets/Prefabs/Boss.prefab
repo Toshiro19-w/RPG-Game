@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 7171826541865957042}
   - component: {fileID: 1785547789527388073}
   - component: {fileID: 7494924708915879603}
+  - component: {fileID: 6367445480176385985}
   m_Layer: 6
   m_Name: Boss
   m_TagString: Enemy
@@ -204,6 +205,8 @@ MonoBehaviour:
     m_Bits: 128
   wallCheckDistance: 0.5
   wallCheckPoint: {fileID: 0}
+  enableWallFollowing: 1
+  wallFollowDistance: 0.3
 --- !u!114 &7171826541865957042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -236,6 +239,7 @@ MonoBehaviour:
   animator: {fileID: 5866008067668104900}
   shootingAnimationTrigger: Shooting
   idleAnimationTrigger: Idle
+  stompingAnimationTrigger: Stomping
   shootingAnimationDuration: 1
 --- !u!114 &7494924708915879603
 MonoBehaviour:
@@ -258,6 +262,31 @@ MonoBehaviour:
   enableBurstFire: 1
   burstCount: 3
   burstDelay: 0.3
+--- !u!114 &6367445480176385985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 507372978903393368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae326ec96c3df5a49b6be0e25f5fbc69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossStompingAttack
+  shootsBeforeStomping: 4
+  stompingDamage: 30
+  stompingRange: 2
+  flyHeight: 3
+  flySpeed: 8
+  stompingDuration: 1.5
+  playerLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  stompingAnimationTrigger: Stomping
+  shootingAnimationTrigger: Shooting
+  idleAnimationTrigger: Idle
+  enableDebugGizmos: 1
 --- !u!1 &4547778884961078882
 GameObject:
   m_ObjectHideFlags: 0
