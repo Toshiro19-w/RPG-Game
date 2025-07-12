@@ -18,12 +18,14 @@ public class BossAttack : MonoBehaviour
     
     private EnemyMovement enemyMovement;
     private BossAnimationController bossAnimController;
+    private BossStompingAttack bossStompingAttack; // Thêm reference đến stomping attack
     private bool isShooting = false;
     
     void Start()
     {
         enemyMovement = GetComponent<EnemyMovement>();
         bossAnimController = GetComponent<BossAnimationController>();
+        bossStompingAttack = GetComponent<BossStompingAttack>(); // Lấy stomping attack component
         
         // Kiểm tra các components quan trọng
         if (enemyMovement == null)
@@ -49,6 +51,13 @@ public class BossAttack : MonoBehaviour
     {
         while (true)
         {
+            // Kiểm tra nếu đang stomping, không bắn
+            if (bossStompingAttack != null && bossStompingAttack.IsStomping())
+            {
+                yield return new WaitForSeconds(fireRate);
+                continue;
+            }
+            
             if (enemyMovement != null && enemyMovement.HasSpottedPlayer() && 
                 CheckShootingRange() && IsPlayerAlive())
             {
@@ -179,11 +188,11 @@ public class BossAttack : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        // Hiển thị khoảng cách bắn trong Scene view
-        Gizmos.color = Color.red;
+        // Hiển thị khoảng cách bắn trong Scene view - Màu cam cho shooting range
+        Gizmos.color = Color.magenta;
         Gizmos.DrawWireSphere(transform.position, shootingRange);
         
-        // Hiển thị firePoint
+        // Hiển thị firePoint - Màu cyan cho fire point
         if (firePoint != null)
         {
             Gizmos.color = Color.cyan;

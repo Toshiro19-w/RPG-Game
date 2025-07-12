@@ -135,13 +135,45 @@ PrefabInstance:
       propertyPath: bulletPrefab
       value: 
       objectReference: {fileID: 1317231576205026155, guid: 48c9f5b11c06cc74cab2c4c741375f29, type: 3}
+    - target: {fileID: 6367445480176385985, guid: bb8d4c4778897fc428261cd497f253dd, type: 3}
+      propertyPath: flySpeed
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6367445480176385985, guid: bb8d4c4778897fc428261cd497f253dd, type: 3}
+      propertyPath: flyHeight
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6367445480176385985, guid: bb8d4c4778897fc428261cd497f253dd, type: 3}
+      propertyPath: stompingRange
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6367445480176385985, guid: bb8d4c4778897fc428261cd497f253dd, type: 3}
+      propertyPath: stompingDamage
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 6367445480176385985, guid: bb8d4c4778897fc428261cd497f253dd, type: 3}
+      propertyPath: stompingDuration
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6367445480176385985, guid: bb8d4c4778897fc428261cd497f253dd, type: 3}
+      propertyPath: shootsBeforeStomping
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6367445480176385985, guid: bb8d4c4778897fc428261cd497f253dd, type: 3}
+      propertyPath: playerLayerMask.m_Bits
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494924708915879603, guid: bb8d4c4778897fc428261cd497f253dd, type: 3}
+      propertyPath: fireRate
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7671613275455442573, guid: bb8d4c4778897fc428261cd497f253dd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -14.08384
+      value: -4.2
       objectReference: {fileID: 0}
     - target: {fileID: 7671613275455442573, guid: bb8d4c4778897fc428261cd497f253dd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -5.99008
+      value: -8.2
       objectReference: {fileID: 0}
     - target: {fileID: 7671613275455442573, guid: bb8d4c4778897fc428261cd497f253dd, type: 3}
       propertyPath: m_LocalPosition.z
@@ -33082,6 +33114,10 @@ PrefabInstance:
     - target: {fileID: 3665457269201043474, guid: 5445af1d7e3fd7d47beb90ce0df9cf06, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 4386692385429736368, guid: 5445af1d7e3fd7d47beb90ce0df9cf06, type: 3}
+      propertyPath: maxHealth
+      value: 20000
       objectReference: {fileID: 0}
     - target: {fileID: 4504961377361000531, guid: 5445af1d7e3fd7d47beb90ce0df9cf06, type: 3}
       propertyPath: m_LocalPosition.x
