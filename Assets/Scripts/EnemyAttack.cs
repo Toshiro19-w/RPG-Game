@@ -38,10 +38,29 @@ public class SkeletonAttack : MonoBehaviour
     {
         while (true)
         {
-            if (enemyMovement != null && enemyMovement.HasSpottedPlayer() && 
-                CheckShootingRange() && IsPlayerAlive())
+            if (enemyMovement != null && enemyMovement.HasSpottedPlayer() && IsPlayerAlive())
             {
-                Shoot();
+                bool inShootingRange = CheckShootingRange();
+                
+                if (inShootingRange)
+                {
+                    // Dừng di chuyển khi trong tầm bắn và bắn
+                    enemyMovement.SetStopForShooting(true);
+                    Shoot();
+                }
+                else
+                {
+                    // Cho phép di chuyển khi không trong tầm bắn
+                    enemyMovement.SetStopForShooting(false);
+                }
+            }
+            else
+            {
+                // Cho phép di chuyển khi không trong điều kiện bắn
+                if (enemyMovement != null)
+                {
+                    enemyMovement.SetStopForShooting(false);
+                }
             }
             yield return new WaitForSeconds(fireRate); // Lặp lại sau mỗi khoảng thời gian fireRate
         }
@@ -127,5 +146,22 @@ public class SkeletonAttack : MonoBehaviour
         
         // Nếu không có PlayerHealth component, chỉ kiểm tra GameObject active
         return true;
+    }
+    
+    // Đảm bảo skeleton có thể di chuyển lại khi script bị tắt
+    void OnDisable()
+    {
+        if (enemyMovement != null)
+        {
+            enemyMovement.SetStopForShooting(false);
+        }
+    }
+    
+    void OnDestroy()
+    {
+        if (enemyMovement != null)
+        {
+            enemyMovement.SetStopForShooting(false);
+        }
     }
 }

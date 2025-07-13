@@ -20,6 +20,9 @@ public class EnemyMovement : MonoBehaviour
     private float wallFollowTimer = 0f; // Timer để thoát khỏi chế độ wall follow
     private const float MAX_WALL_FOLLOW_TIME = 3f; // Thời gian tối đa đi theo tường
     
+    // Thêm biến để kiểm soát việc dừng di chuyển khi bắn
+    private bool shouldStopForShooting = false;
+    
     Rigidbody2D myRigidbody;
     Animator animator;
     bool hasSpottedPlayer = false; // Kiểm tra xem đã phát hiện người chơi hay chưa
@@ -63,8 +66,17 @@ public class EnemyMovement : MonoBehaviour
         
         if (distanceToPlayer <= detectionRange && distanceToPlayer > stoppingDistance)
         {
-            // Di chuyển về phía người chơi
-            MoveTowardsPlayer();
+            // Chỉ di chuyển nếu không bị dừng để bắn
+            if (!shouldStopForShooting)
+            {
+                // Di chuyển về phía người chơi
+                MoveTowardsPlayer();
+            }
+            else
+            {
+                // Dừng animation di chuyển khi đang bắn
+                animator.SetBool("isMoving", false);
+            }
             hasSpottedPlayer = true; // Đánh dấu là đã phát hiện người chơi
         }
         else
@@ -76,10 +88,15 @@ public class EnemyMovement : MonoBehaviour
 
         if (hasSpottedPlayer)
         {
-            // Chỉ di chuyển nếu chưa đến quá gần người chơi
-            if (distanceToPlayer > stoppingDistance)
+            // Chỉ di chuyển nếu chưa đến quá gần người chơi và không bị dừng để bắn
+            if (distanceToPlayer > stoppingDistance && !shouldStopForShooting)
             {
                 MoveTowardsPlayer();
+            }
+            else if (shouldStopForShooting || distanceToPlayer <= stoppingDistance)
+            {
+                // Dừng animation khi trong tầm bắn hoặc quá gần
+                animator.SetBool("isMoving", false);
             }
         }
     }
@@ -351,6 +368,18 @@ public class EnemyMovement : MonoBehaviour
     public void SetSpeed(float newSpeed)
     {
         moveSpeed = newSpeed; // Cập nhật tốc độ di chuyển của Enemy
+    }
+    
+    // Method để dừng di chuyển khi bắn
+    public void SetStopForShooting(bool shouldStop)
+    {
+        shouldStopForShooting = shouldStop;
+    }
+    
+    // Method để kiểm tra xem có đang dừng để bắn không
+    public bool IsStoppedForShooting()
+    {
+        return shouldStopForShooting;
     }
 
 }
