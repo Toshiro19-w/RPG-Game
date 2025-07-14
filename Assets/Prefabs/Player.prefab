@@ -83,7 +83,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 1784253849
-  m_SortingLayer: 4
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 4368409534826075972, guid: 3ffa0a69c70032544b3d8fcf5a7c98e3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -261,3 +261,4 @@ MonoBehaviour:
   damageIndicatorPrefab: {fileID: 8465790614685884788, guid: 52ca933b0187800458f4ea4b297c5433, type: 3}
   invincibilityDuration: 0.5
   spriteRenderer: {fileID: 0}
+  hpBar: {fileID: 0}
