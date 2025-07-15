@@ -122,10 +122,10 @@ public class SlimeAttack : MonoBehaviour
             attackDirection = (player.position - transform.position).normalized;
             
             // Trigger animation nếu có
-            if (animator != null)
-            {
-                animator.SetTrigger("Attack");
-            }
+            // if (animator != null)
+            // {
+            //     animator.SetTrigger("Attack");
+            // }
             
             Debug.Log($"Slime bắt đầu lướt về phía Player!");
             

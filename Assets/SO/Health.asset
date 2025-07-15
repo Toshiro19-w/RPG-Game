@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ca9598f8b9338a44b3e0e74193babb9, type: 3}
+  m_Name: Health
+  m_EditorClassIdentifier: Assembly-CSharp::RewardData
+  rewardName: Heart
+  rewardSprite: {fileID: -1312554222, guid: 38c3ad041dc2135489409e7bf9c67f38, type: 3}
+  rewardType: 1
+  value: 10
+  minValue: 5
+  maxValue: 20
+  hasSpecialEffect: 1
+  effectDescription: 
