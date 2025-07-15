@@ -53,7 +53,7 @@ public class Room : MonoBehaviour
         if (player != null)
         {
             float distance = Vector3.Distance(transform.position, player.transform.position);
-            if (distance < 10f) // Player trong room
+            if (distance < 30f) // Player trong room
             {
                 Debug.Log($"Player detected in {gameObject.name}, entering room...");
                 EnterRoom();
