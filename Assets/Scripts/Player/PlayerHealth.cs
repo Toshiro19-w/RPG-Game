@@ -21,7 +21,12 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     {
         currentHealth = maxHealth;
         spriteRenderer ??= GetComponent<SpriteRenderer>();
-        hpBar.HPInGame(currentHealth, maxHealth);
+        
+        // Safely initialize HP bar if it exists
+        if (hpBar != null)
+        {
+            hpBar.HPInGame(currentHealth, maxHealth);
+        }
     }
     
     public void TakeDamage(int damage)
@@ -30,7 +35,12 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        hpBar.HPInGame(currentHealth, maxHealth);
+        
+        // Safely update HP bar if it exists
+        if (hpBar != null)
+        {
+            hpBar.HPInGame(currentHealth, maxHealth);
+        }
         
         // Show damage indicator
         ShowDamageIndicator(damage, Color.red);
@@ -46,7 +56,12 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     {
         currentHealth += healAmount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        hpBar.HPInGame(currentHealth, maxHealth);
+        
+        // Safely update HP bar if it exists
+        if (hpBar != null)
+        {
+            hpBar.HPInGame(currentHealth, maxHealth);
+        }
         
         // Show heal indicator
         ShowDamageIndicator(healAmount, Color.green);

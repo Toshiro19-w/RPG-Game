@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections;
+using InfinityMap;
 
-public class SlimeAttack : MonoBehaviour
+public class InfinitySlimeAttack : MonoBehaviour
 {
     [Header("Attack Settings")]
     [SerializeField] private float attackRange = 2f; // Khoảng cách để bắt đầu tấn công
@@ -12,17 +13,16 @@ public class SlimeAttack : MonoBehaviour
     [SerializeField] private float knockbackForce = 5f; // Lực đẩy ngược lại
     [SerializeField] private float knockbackDuration = 0.5f; // Thời gian bật ngược
     
-        
     [Header("Wall Detection")]
     [SerializeField] private LayerMask wallLayerMask = -1; // Layer của tường
     [SerializeField] private float wallCheckDistance = 0.8f; // Khoảng cách check tường
     [SerializeField] private float safetyBuffer = 0.3f; // Khoảng cách an toàn từ tường
-
+    
     [Header("Debug")]
     [SerializeField] private bool enableDebugGizmos = true;
     
     // Components
-    private EnemyMovement enemyMovement;
+    private InfinityEnemyMovement enemyMovement;
     private Rigidbody2D rb;
     private Animator animator;
     private Collider2D slimeCollider;
@@ -37,7 +37,7 @@ public class SlimeAttack : MonoBehaviour
     void Start()
     {
         // Lấy các components cần thiết
-        enemyMovement = GetComponent<EnemyMovement>();
+        enemyMovement = GetComponent<InfinityEnemyMovement>();
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         slimeCollider = GetComponent<Collider2D>();
@@ -45,7 +45,7 @@ public class SlimeAttack : MonoBehaviour
         // Kiểm tra components quan trọng
         if (enemyMovement == null)
         {
-            Debug.LogError($"EnemyMovement component không tìm thấy trên {gameObject.name}!");
+            Debug.LogError($"InfinityEnemyMovement component không tìm thấy trên {gameObject.name}!");
         }
         
         if (rb == null)
@@ -66,7 +66,7 @@ public class SlimeAttack : MonoBehaviour
     {
         while (true)
         {
-            if (enemyMovement != null && enemyMovement.HasSpottedPlayer() && 
+            if (enemyMovement != null && 
                 canAttack && !isAttacking && !isKnockedBack && IsPlayerAlive())
             {
                 if (CheckAttackRange())
@@ -112,10 +112,10 @@ public class SlimeAttack : MonoBehaviour
         isAttacking = true;
         canAttack = false;
         
-        // Dừng di chuyển thông thường
+        // Dừng di chuyển thông thường - sử dụng method của InfinityEnemyMovement
         if (enemyMovement != null)
         {
-            enemyMovement.SetStopForShooting(true);
+            enemyMovement.SetStopForAttack(true);
         }
         
         // Lưu vị trí ban đầu
@@ -128,13 +128,13 @@ public class SlimeAttack : MonoBehaviour
             attackDirection = (player.position - transform.position).normalized;
             
             // Trigger animation nếu có
-            // if (animator != null)
-            // {
-            //     animator.SetTrigger("Attack");
-            // }
+            if (animator != null)
+            {
+                animator.SetTrigger("Attack");
+            }
             
-            Debug.Log($"Slime bắt đầu lướt về phía Player!");
-            
+            Debug.Log($"InfinitySlime bắt đầu lướt về phía Player!");
+                        
             // Thực hiện lướt vào
             yield return StartCoroutine(LungeTowardsPlayer());
             
@@ -151,15 +151,15 @@ public class SlimeAttack : MonoBehaviour
         // Cho phép di chuyển lại
         if (enemyMovement != null)
         {
-            enemyMovement.SetStopForShooting(false);
+            enemyMovement.SetStopForAttack(false);
         }
         
         // Cooldown trước lần tấn công tiếp theo
         yield return new WaitForSeconds(attackCooldown);
         canAttack = true;
         
-        Debug.Log($"Slime sẵn sàng cho lần tấn công tiếp theo!");
-    }
+        Debug.Log($"InfinitySlime sẵn sàng cho lần tấn công tiếp theo!");
+        }
     
     IEnumerator LungeTowardsPlayer()
     {
@@ -196,25 +196,24 @@ public class SlimeAttack : MonoBehaviour
         
         if (distanceToPlayer <= 1f) // Khoảng cách tấn công
         {
-                        // Kiểm tra an toàn cho player trước khi gây sát thương
+            // Kiểm tra an toàn cho player trước khi gây sát thương
             CheckPlayerSafety();
             
-
             // Gây sát thương cho player
             if (player.TryGetComponent<PlayerHealth>(out var playerHealth))
             {
                 playerHealth.TakeDamage(attackDamage);
-                Debug.Log($"Slime gây {attackDamage} sát thương cho Player!");
+                Debug.Log($"InfinitySlime gây {attackDamage} sát thương cho Player!");
             }
             else if (player.TryGetComponent<IDamageable>(out var damageable))
             {
                 damageable.TakeDamage(attackDamage);
-                Debug.Log($"Slime gây {attackDamage} sát thương cho Player!");
+                Debug.Log($"InfinitySlime gây {attackDamage} sát thương cho Player!");
             }
         }
         else
         {
-            Debug.Log($"Slime không trúng Player (khoảng cách: {distanceToPlayer:F2})");
+            Debug.Log($"InfinitySlime không trúng Player (khoảng cách: {distanceToPlayer:F2})");
         }
     }
     
@@ -248,7 +247,26 @@ public class SlimeAttack : MonoBehaviour
         transform.position = GetSafePosition(knockbackTarget);
         isKnockedBack = false;
     }
-        
+    
+    // Xử lý va chạm với player trong lúc tấn công
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (isAttacking && other.CompareTag("Player"))
+        {
+            // Gây sát thương ngay khi chạm vào
+            if (other.TryGetComponent<PlayerHealth>(out var playerHealth))
+            {
+                playerHealth.TakeDamage(attackDamage);
+                Debug.Log($"InfinitySlime va chạm và gây {attackDamage} sát thương cho Player!");
+            }
+            else if (other.TryGetComponent<IDamageable>(out var damageable))
+            {
+                damageable.TakeDamage(attackDamage);
+                Debug.Log($"InfinitySlime va chạm và gây {attackDamage} sát thương cho Player!");
+            }
+        }
+    }
+    
     // Kiểm tra va chạm với tường
     private bool IsWallInDirection(Vector3 position, Vector3 direction, float distance)
     {
@@ -366,25 +384,6 @@ public class SlimeAttack : MonoBehaviour
         }
     }
     
-    // Xử lý va chạm với player trong lúc tấn công
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (isAttacking && other.CompareTag("Player"))
-        {
-            // Gây sát thương ngay khi chạm vào
-            if (other.TryGetComponent<PlayerHealth>(out var playerHealth))
-            {
-                playerHealth.TakeDamage(attackDamage);
-                Debug.Log($"Slime va chạm và gây {attackDamage} sát thương cho Player!");
-            }
-            else if (other.TryGetComponent<IDamageable>(out var damageable))
-            {
-                damageable.TakeDamage(attackDamage);
-                Debug.Log($"Slime va chạm và gây {attackDamage} sát thương cho Player!");
-            }
-        }
-    }
-    
     // Public methods cho các script khác
     public bool IsAttacking()
     {
@@ -404,6 +403,24 @@ public class SlimeAttack : MonoBehaviour
     public float GetAttackCooldown()
     {
         return attackCooldown;
+    }
+    
+    // Debug and utility methods
+    public bool IsCurrentlyAttacking()
+    {
+        return isAttacking;
+    }
+    
+    public bool CanCurrentlyAttack()
+    {
+        return canAttack && !isKnockedBack && IsPlayerAlive();
+    }
+    
+    public float GetDistanceToPlayer()
+    {
+        Transform player = enemyMovement?.GetPlayerTransform();
+        if (player == null) return float.MaxValue;
+        return Vector2.Distance(transform.position, player.position);
     }
     
     // Debug visualization
