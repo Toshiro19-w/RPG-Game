@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class PlayerCombat : MonoBehaviour
 {
@@ -46,6 +47,8 @@ public class PlayerCombat : MonoBehaviour
     private Rigidbody2D rb;
     private PlayerMovement playerMovement;
     private bool isAttacking;
+
+    public event Action<KeyCode, float> OnSkillUsed;
 
     [System.Serializable]
     public class ProjectileData
@@ -125,28 +128,32 @@ public class PlayerCombat : MonoBehaviour
         animator?.SetTrigger("Flash");
         rb.position = targetPosition;
         cooldownTimers[flashKey] = flashCooldown;
+        OnSkillUsed?.Invoke(flashKey, flashCooldown);
     }
 
     private void MeleeAttack()
     {
         StartCoroutine(PerformAttack("MeleeAttack", meleeProjectilePrefab, meleeProjectileSpeed));
         cooldownTimers[meleeKey] = meleeCooldown;
+        OnSkillUsed?.Invoke(meleeKey, meleeCooldown);
     }
 
     private void CastSkill(ProjectileData data)
     {
-        string triggerName = data.key == KeyCode.E ? "CastIce" : 
-                           data.key == KeyCode.Q ? "CastFire" : 
+        string triggerName = data.key == KeyCode.E ? "CastIce" :
+                           data.key == KeyCode.Q ? "CastFire" :
                            data.key == KeyCode.R ? "CastIceBarrage" : "CastFireWall";
-        
+
+
         if (data.key == KeyCode.R)
             StartCoroutine(PerformIceBarrage(triggerName, data.prefab, data.speed));
         else if (data.key == KeyCode.T)
             StartCoroutine(PerformFireWall(triggerName, data.prefab));
         else
             StartCoroutine(PerformAttack(triggerName, data.prefab, data.speed));
-            
+
         cooldownTimers[data.key] = data.cooldown;
+        OnSkillUsed?.Invoke(data.key, data.cooldown);
     }
 
     private IEnumerator PerformAttack(string animationTrigger, GameObject projectilePrefab, float projectileSpeed)
@@ -278,6 +285,32 @@ public class PlayerCombat : MonoBehaviour
         animator?.SetFloat("AttackX", 0);
         animator?.SetFloat("AttackY", 0);
         playerMovement?.ResumeMovement();
+    }
+
+    public float GetCooldownForSkill(KeyCode key)
+    {
+        // Kiểm tra các kỹ năng trong mảng projectiles trước
+        foreach (var projectile in projectiles)
+        {
+            if (projectile.key == key)
+            {
+                return projectile.cooldown;
+            }
+        }
+
+        // Kiểm tra các kỹ năng đặc biệt khác
+        if (key == flashKey)
+        {
+            return flashCooldown;
+        }
+
+        if (key == meleeKey)
+        {
+            return meleeCooldown;
+        }
+
+        // Nếu không tìm thấy, trả về 0
+        return 0f;
     }
 
     public bool IsAttacking() => isAttacking;
