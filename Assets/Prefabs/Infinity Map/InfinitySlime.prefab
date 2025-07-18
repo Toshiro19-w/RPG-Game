@@ -246,7 +246,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InfinityMap.InfinityEnemy
   enemyType: 1
-  expReward: 10
+  expReward: 15
+  scoreReward: 50
   deathEffect: {fileID: 0}
 --- !u!114 &768092073178010018
 MonoBehaviour:

@@ -36,57 +36,51 @@ public class InfinitySlimeAttack : MonoBehaviour
     
     void Start()
     {
-        // Lấy các components cần thiết
+        InitializeComponents();
+        StartCoroutine(CheckAndAttack());
+    }
+    
+    private void InitializeComponents()
+    {
         enemyMovement = GetComponent<InfinityEnemyMovement>();
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         slimeCollider = GetComponent<Collider2D>();
         
-        // Kiểm tra components quan trọng
+        // Kiểm tra các component cần thiết
         if (enemyMovement == null)
-        {
             Debug.LogError($"InfinityEnemyMovement component không tìm thấy trên {gameObject.name}!");
-        }
         
         if (rb == null)
-        {
             Debug.LogError($"Rigidbody2D component không tìm thấy trên {gameObject.name}!");
-        }
-        
-        // Bắt đầu kiểm tra tấn công
-        StartCoroutine(CheckAndAttack());
     }
 
-    void Update()
-    {
-        // Update attack logic sẽ được xử lý trong Coroutines
-    }
-    
     IEnumerator CheckAndAttack()
     {
         while (true)
         {
-            if (enemyMovement != null && 
-                canAttack && !isAttacking && !isKnockedBack && IsPlayerAlive())
+            if (ShouldPerformAttack())
             {
-                if (CheckAttackRange())
-                {
-                    StartCoroutine(PerformLungeAttack());
-                }
+                StartCoroutine(PerformLungeAttack());
             }
-            yield return new WaitForSeconds(0.1f); // Kiểm tra mỗi 0.1 giây
+            yield return new WaitForSeconds(0.1f);
         }
     }
     
-    bool CheckAttackRange()
+    private bool ShouldPerformAttack()
+    {
+        return enemyMovement != null && 
+               canAttack && !isAttacking && !isKnockedBack && 
+               IsPlayerAlive() && CheckAttackRange();
+    }
+    
+    private bool CheckAttackRange()
     {
         Transform player = enemyMovement?.GetPlayerTransform();
-        if (player != null)
-        {
-            float distanceToPlayer = Vector2.Distance(transform.position, player.position);
-            return distanceToPlayer <= attackRange;
-        }
-        return false;
+        if (player == null) return false;
+        
+        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+        return distanceToPlayer <= attackRange;
     }
     
     private bool IsPlayerAlive()
@@ -112,11 +106,8 @@ public class InfinitySlimeAttack : MonoBehaviour
         isAttacking = true;
         canAttack = false;
         
-        // Dừng di chuyển thông thường - sử dụng method của InfinityEnemyMovement
-        if (enemyMovement != null)
-        {
-            enemyMovement.SetStopForAttack(true);
-        }
+        // Dừng di chuyển thông thường
+        enemyMovement?.SetStopForAttack(true);
         
         // Lưu vị trí ban đầu
         originalPosition = transform.position;
@@ -127,13 +118,8 @@ public class InfinitySlimeAttack : MonoBehaviour
         {
             attackDirection = (player.position - transform.position).normalized;
             
-            // Trigger animation nếu có
-            if (animator != null)
-            {
-                animator.SetTrigger("Attack");
-            }
-            
-            Debug.Log($"InfinitySlime bắt đầu lướt về phía Player!");
+            // Trigger animation
+            animator?.SetTrigger("Attack");
                         
             // Thực hiện lướt vào
             yield return StartCoroutine(LungeTowardsPlayer());
@@ -147,19 +133,12 @@ public class InfinitySlimeAttack : MonoBehaviour
         
         // Khôi phục trạng thái
         isAttacking = false;
-        
-        // Cho phép di chuyển lại
-        if (enemyMovement != null)
-        {
-            enemyMovement.SetStopForAttack(false);
-        }
+        enemyMovement?.SetStopForAttack(false);
         
         // Cooldown trước lần tấn công tiếp theo
         yield return new WaitForSeconds(attackCooldown);
         canAttack = true;
-        
-        Debug.Log($"InfinitySlime sẵn sàng cho lần tấn công tiếp theo!");
-        }
+    }
     
     IEnumerator LungeTowardsPlayer()
     {
@@ -191,24 +170,20 @@ public class InfinitySlimeAttack : MonoBehaviour
         Transform player = enemyMovement?.GetPlayerTransform();
         if (player == null) return;
         
-        // Kiểm tra khoảng cách với player
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
         
         if (distanceToPlayer <= 1f) // Khoảng cách tấn công
         {
-            // Kiểm tra an toàn cho player trước khi gây sát thương
-            CheckPlayerSafety();
+            CheckPlayerSafety(); // Kiểm tra an toàn cho player
             
             // Gây sát thương cho player
             if (player.TryGetComponent<PlayerHealth>(out var playerHealth))
             {
                 playerHealth.TakeDamage(attackDamage);
-                Debug.Log($"InfinitySlime gây {attackDamage} sát thương cho Player!");
             }
             else if (player.TryGetComponent<IDamageable>(out var damageable))
             {
                 damageable.TakeDamage(attackDamage);
-                Debug.Log($"InfinitySlime gây {attackDamage} sát thương cho Player!");
             }
         }
         else
@@ -248,22 +223,25 @@ public class InfinitySlimeAttack : MonoBehaviour
         isKnockedBack = false;
     }
     
-    // Xử lý va chạm với player trong lúc tấn công
     void OnTriggerEnter2D(Collider2D other)
     {
         if (isAttacking && other.CompareTag("Player"))
         {
-            // Gây sát thương ngay khi chạm vào
-            if (other.TryGetComponent<PlayerHealth>(out var playerHealth))
-            {
-                playerHealth.TakeDamage(attackDamage);
-                Debug.Log($"InfinitySlime va chạm và gây {attackDamage} sát thương cho Player!");
-            }
-            else if (other.TryGetComponent<IDamageable>(out var damageable))
-            {
-                damageable.TakeDamage(attackDamage);
-                Debug.Log($"InfinitySlime va chạm và gây {attackDamage} sát thương cho Player!");
-            }
+            DealDamageToPlayer(other);
+        }
+    }
+    
+    private void DealDamageToPlayer(Collider2D player)
+    {
+        if (player.TryGetComponent<PlayerHealth>(out var playerHealth))
+        {
+            playerHealth.TakeDamage(attackDamage);
+            Debug.Log($"InfinitySlime va chạm và gây {attackDamage} sát thương cho Player!");
+        }
+        else if (player.TryGetComponent<IDamageable>(out var damageable))
+        {
+            damageable.TakeDamage(attackDamage);
+            Debug.Log($"InfinitySlime va chạm và gây {attackDamage} sát thương cho Player!");
         }
     }
     
@@ -384,55 +362,37 @@ public class InfinitySlimeAttack : MonoBehaviour
         }
     }
     
-    // Public methods cho các script khác
-    public bool IsAttacking()
-    {
-        return isAttacking;
-    }
-    
-    public bool CanAttack()
-    {
-        return canAttack;
-    }
-    
-    public float GetAttackRange()
-    {
-        return attackRange;
-    }
-    
-    public float GetAttackCooldown()
-    {
-        return attackCooldown;
-    }
-    
-    // Debug and utility methods
-    public bool IsCurrentlyAttacking()
-    {
-        return isAttacking;
-    }
-    
-    public bool CanCurrentlyAttack()
-    {
-        return canAttack && !isKnockedBack && IsPlayerAlive();
-    }
+    public bool IsAttacking() => isAttacking;
+    public bool CanAttack() => canAttack;
+    public float GetAttackRange() => attackRange;
+    public float GetAttackCooldown() => attackCooldown;
+    public bool IsCurrentlyAttacking() => isAttacking;
+    public bool CanCurrentlyAttack() => canAttack && !isKnockedBack && IsPlayerAlive();
     
     public float GetDistanceToPlayer()
     {
         Transform player = enemyMovement?.GetPlayerTransform();
-        if (player == null) return float.MaxValue;
-        return Vector2.Distance(transform.position, player.position);
+        return player != null ? Vector2.Distance(transform.position, player.position) : float.MaxValue;
     }
     
-    // Debug visualization
     void OnDrawGizmosSelected()
     {
         if (!enableDebugGizmos) return;
         
-        // Hiển thị phạm vi tấn công
+        DrawAttackRangeGizmos();
+        DrawLungeGizmos();
+        DrawOriginalPositionGizmos();
+        DrawWallDetectionGizmos();
+    }
+    
+    private void DrawAttackRangeGizmos()
+    {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
-        
-        // Hiển thị khoảng cách lướt an toàn
+    }
+    
+    private void DrawLungeGizmos()
+    {
         if (isAttacking && attackDirection != Vector3.zero)
         {
             Gizmos.color = Color.yellow;
@@ -440,7 +400,6 @@ public class InfinitySlimeAttack : MonoBehaviour
             Gizmos.DrawLine(transform.position, safeLungeTarget);
             Gizmos.DrawWireSphere(safeLungeTarget, 0.3f);
             
-            // Hiển thị wall check rays
             Gizmos.color = Color.magenta;
             for (float distance = 0.2f; distance <= lungeDistance; distance += 0.4f)
             {
@@ -448,28 +407,23 @@ public class InfinitySlimeAttack : MonoBehaviour
                 Gizmos.DrawWireCube(checkPoint, Vector3.one * 0.1f);
             }
         }
-        
-        // Hiển thị vị trí ban đầu nếu đang tấn công
+    }
+    
+    private void DrawOriginalPositionGizmos()
+    {
         if (isAttacking && originalPosition != Vector3.zero)
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(originalPosition, 0.2f);
         }
-        
-        // Hiển thị wall detection range
-        Gizmos.color = Color.cyan;
+    }
+    
+    private void DrawWallDetectionGizmos()
+    {
         Vector3[] checkDirections = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
         foreach (Vector3 dir in checkDirections)
         {
-            Vector3 rayEnd = transform.position + (dir * wallCheckDistance);
-            if (IsWallInDirection(transform.position, dir, wallCheckDistance))
-            {
-                Gizmos.color = Color.red; // Có tường
-            }
-            else
-            {
-                Gizmos.color = Color.green; // Không có tường
-            }
+            Gizmos.color = IsWallInDirection(transform.position, dir, wallCheckDistance) ? Color.red : Color.green;
             Gizmos.DrawRay(transform.position, dir * wallCheckDistance);
         }
     }

@@ -190,8 +190,6 @@ namespace InfinityMap
             
             // Add to spawned enemies list
             spawnedEnemies.Add(spawnedEnemy);
-            
-            Debug.Log($"Spawned {selectedData.enemyType} at {spawnPosition}");
         }
         
         private EnemySpawnData SelectRandomEnemyData()
