@@ -69,11 +69,6 @@ namespace InfinityMap
                 myRigidbody.gravityScale = 0f; // Tắt gravity cho 2D top-down
                 myRigidbody.freezeRotation = true; // Không cho phép xoay
             }
-            
-            if (enableDebugLogs)
-            {
-                Debug.Log($"Enemy {gameObject.name} khởi tạo components - Rigidbody2D: {(myRigidbody != null ? "OK" : "MISSING")}, Animator: {(animator != null ? "OK" : "MISSING")}");
-            }
         }
         
         private void FindPlayer()
@@ -82,8 +77,6 @@ namespace InfinityMap
             if (playerObject != null)
             {
                 player = playerObject.transform;
-                if (enableDebugLogs)
-                    Debug.Log($"Enemy {gameObject.name} đã tìm thấy Player tại {player.position}");
             }
             else
             {
@@ -104,7 +97,6 @@ namespace InfinityMap
             if (enableDebugLogs && Time.frameCount % 60 == 0) // Log mỗi giây (60 fps)
             {
                 float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-                Debug.Log($"Enemy {gameObject.name}: Distance to player = {distanceToPlayer:F2}, isMoving = {isMoving}, shouldStopForShooting = {shouldStopForShooting}");
             }
             
             HandleMovement();
@@ -128,19 +120,6 @@ namespace InfinityMap
             {
                 StopMoving();
                 isMoving = false;
-                
-                // Debug tại sao enemy dừng lại
-                if (enableDebugLogs)
-                {
-                    if (distanceToPlayer <= stoppingDistance)
-                    {
-                        Debug.Log($"Enemy {gameObject.name} dừng lại vì đã đến gần player (distance: {distanceToPlayer:F2} <= {stoppingDistance})");
-                    }
-                    if (shouldStopForShooting)
-                    {
-                        Debug.Log($"Enemy {gameObject.name} dừng lại để bắn");
-                    }
-                }
             }
             
             // Update animator
@@ -177,10 +156,6 @@ namespace InfinityMap
             {
                 Vector3 newPosition = transform.position + moveDirection * moveSpeed * Time.deltaTime;
                 transform.position = newPosition;
-                
-                // Debug movement
-                if (enableDebugLogs)
-                    Debug.Log($"Enemy {gameObject.name} di chuyển từ {transform.position} theo hướng {moveDirection} với tốc độ {moveSpeed}");
             }
             else
             {
@@ -322,12 +297,6 @@ namespace InfinityMap
         {
             Vector3 checkPosition = transform.position;
             RaycastHit2D hit = Physics2D.Raycast(checkPosition, direction, wallCheckDistance, wallLayerMask);
-            
-            if (hit.collider != null && enableDebugLogs)
-            {
-                Debug.Log($"Enemy {gameObject.name} phát hiện tường ở hướng {direction} - {hit.collider.name}");
-            }
-            
             return hit.collider != null;
         }
         

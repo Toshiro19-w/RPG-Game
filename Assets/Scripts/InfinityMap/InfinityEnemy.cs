@@ -7,56 +7,57 @@ namespace InfinityMap
         Skeleton,
         Slime
     }
-    
+
     public class InfinityEnemy : MonoBehaviour
     {
         [Header("Enemy Settings")]
         [SerializeField] private EnemyType enemyType;
         [SerializeField] private int expReward = 10;
-        
+        [SerializeField] private int scoreReward = 5; // Thưởng điểm khi bị tiêu diệt
+
         [Header("Visual Effects")]
         [SerializeField] private GameObject deathEffect;
-        
+
         // Components - sử dụng lại từ hệ thống cũ
         private InfinityEnemyMovement movement;
         private EnemyHealth enemyHealth; // Sử dụng EnemyHealth cũ
         private SkeletonAttack skeletonAttack; // Cho Skeleton
         private SlimeAttack slimeAttack; // Cho Slime
-        
+
         // State
         private bool isDead = false;
         private int currentExpReward;
-        
+        private int currentScoreReward;
+
         void Start()
         {
             InitializeEnemy();
         }
-        
+
         private void InitializeEnemy()
         {
             currentExpReward = expReward;
-            
+            currentScoreReward = scoreReward;
+
             // Safely get components
             movement = GetComponent<InfinityEnemyMovement>();
             enemyHealth = GetComponent<EnemyHealth>();
-            
+
             // Get attack components dựa vào enemy type
             skeletonAttack = GetComponent<SkeletonAttack>();
             slimeAttack = GetComponent<SlimeAttack>();
-            
+
             // Validate required components
             if (enemyHealth == null)
             {
-                Debug.LogError($"EnemyHealth component missing on {gameObject.name}! Adding default component.");
                 enemyHealth = gameObject.AddComponent<EnemyHealth>();
             }
-            
+
             if (movement == null)
             {
-                Debug.LogWarning($"InfinityEnemyMovement component missing on {gameObject.name}! Adding default component.");
                 movement = gameObject.AddComponent<InfinityEnemyMovement>();
             }
-            
+
             // Subscribe to death event của EnemyHealth
             if (enemyHealth != null)
             {
@@ -64,11 +65,11 @@ namespace InfinityMap
                 InvokeRepeating(nameof(CheckIfDead), 0.1f, 0.1f);
             }
         }
-        
+
         private void CheckIfDead()
         {
             if (isDead) return;
-            
+
             // Kiểm tra nếu GameObject bị destroy (EnemyHealth tự destroy khi chết)
             if (this == null || gameObject == null)
             {
@@ -76,7 +77,7 @@ namespace InfinityMap
                 return;
             }
         }
-        
+
         private void OnEnemyDeath()
         {
             if (isDead) return;
@@ -86,6 +87,12 @@ namespace InfinityMap
             if (PlayerLevel.Instance != null)
             {
                 PlayerLevel.Instance.AddExp(currentExpReward);
+            }
+            
+            // Award score using PlayerScore system
+            if (PlayerScore.Instance != null)
+            {
+                PlayerScore.Instance.AddScoreFromEnemy(this);
             }
             
             // Notify manager
@@ -100,11 +107,11 @@ namespace InfinityMap
                 Instantiate(deathEffect, transform.position, Quaternion.identity);
             }
             
-            Debug.Log($"{enemyType} died and awarded {currentExpReward} exp!");
+            Debug.Log($"{enemyType} died and awarded {currentExpReward} exp and {currentScoreReward} score!");
             
             CancelInvoke(nameof(CheckIfDead));
         }
-        
+
         void OnDestroy()
         {
             if (!isDead)
@@ -112,17 +119,19 @@ namespace InfinityMap
                 OnEnemyDeath();
             }
         }
-        
+
         // Getters
         public EnemyType GetEnemyType() => enemyType;
         public bool IsDead() => isDead;
         public int GetExpReward() => currentExpReward;
+        public int GetScoreReward() => currentScoreReward;
         public EnemyHealth GetEnemyHealth() => enemyHealth;
-        
+
         // Setters for spawner configuration
         public void SetEnemyType(EnemyType type) => enemyType = type;
         public void SetExpReward(int exp) => currentExpReward = exp;
-        
+        public void SetScoreReward(int score) => currentScoreReward = score;
+
         // Scale health và damage thông qua EnemyHealth và Attack components
         public void SetMaxHealth(int health)
         {
@@ -131,14 +140,14 @@ namespace InfinityMap
                 try
                 {
                     // EnemyHealth cũ không có public setter, ta sẽ dùng reflection
-                    var healthField = typeof(EnemyHealth).GetField("maxHealth", 
+                    var healthField = typeof(EnemyHealth).GetField("maxHealth",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                     if (healthField != null)
                     {
                         healthField.SetValue(enemyHealth, health);
                     }
-                    
-                    var currentHealthField = typeof(EnemyHealth).GetField("currentHealth", 
+
+                    var currentHealthField = typeof(EnemyHealth).GetField("currentHealth",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                     if (currentHealthField != null)
                     {
@@ -151,7 +160,7 @@ namespace InfinityMap
                 }
             }
         }
-        
+
         public void SetDamage(int damage)
         {
             try
@@ -159,7 +168,7 @@ namespace InfinityMap
                 // Set damage cho attack components tương ứng
                 if (enemyType == EnemyType.Slime && slimeAttack != null)
                 {
-                    var damageField = typeof(SlimeAttack).GetField("attackDamage", 
+                    var damageField = typeof(SlimeAttack).GetField("attackDamage",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                     if (damageField != null)
                     {
@@ -173,14 +182,14 @@ namespace InfinityMap
                 Debug.LogWarning($"Could not set damage via reflection: {e.Message}");
             }
         }
-        
+
         public int GetCurrentHealth()
         {
             if (enemyHealth != null)
             {
                 try
                 {
-                    var currentHealthField = typeof(EnemyHealth).GetField("currentHealth", 
+                    var currentHealthField = typeof(EnemyHealth).GetField("currentHealth",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                     if (currentHealthField != null)
                     {
@@ -194,14 +203,14 @@ namespace InfinityMap
             }
             return 0;
         }
-        
+
         public int GetMaxHealth()
         {
             if (enemyHealth != null)
             {
                 try
                 {
-                    var maxHealthField = typeof(EnemyHealth).GetField("maxHealth", 
+                    var maxHealthField = typeof(EnemyHealth).GetField("maxHealth",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                     if (maxHealthField != null)
                     {
@@ -215,5 +224,6 @@ namespace InfinityMap
             }
             return 0;
         }
+        
     }
 }

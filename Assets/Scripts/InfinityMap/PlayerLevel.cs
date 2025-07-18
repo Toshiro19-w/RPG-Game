@@ -14,12 +14,12 @@ namespace InfinityMap
         [SerializeField] private float expMultiplier = 1.5f; // Multiplier cho exp cần thiết mỗi level
         
         [Header("Level Effects")]
-        [SerializeField] private float enemySpawnRateMultiplier = 0.9f; // Giảm thời gian spawn 10% mỗi level
+        [SerializeField] private float enemySpawnRateMultiplier = 0.95f; // Giảm thời gian spawn 10% mỗi level
         [SerializeField] private float minSpawnRate = 0.3f; // Thời gian spawn tối thiểu
         
         // Events
         public static event Action<int> OnLevelUp;
-        public static event Action<int, int> OnExpChanged; // current exp, exp to next level
+        public static event Action<int, int> OnExpChanged; // Kinh nghiệm hiện tại và kinh nghiệm cần thiết cho level tiếp theo
         
         void Awake()
         {
@@ -44,7 +44,7 @@ namespace InfinityMap
         {
             currentExp += exp;
             
-            // Check for level up
+            // Kiểm tra để lên level
             while (currentExp >= expToNextLevel)
             {
                 LevelUp();
@@ -58,7 +58,7 @@ namespace InfinityMap
             currentExp -= expToNextLevel;
             currentLevel++;
             
-            // Calculate new exp requirement
+            // Tính số kinh nghiệm cần thiết cho level tiếp theo
             expToNextLevel = Mathf.RoundToInt(expToNextLevel * expMultiplier);
             
             Debug.Log($"Level Up! New Level: {currentLevel}");
