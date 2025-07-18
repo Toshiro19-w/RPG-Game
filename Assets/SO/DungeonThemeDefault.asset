@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abf2cd8a64c518c43be0fc7ce57dbb78, type: 3}
+  m_Name: DungeonThemeDefault
+  m_EditorClassIdentifier: Assembly-CSharp::DungeonTheme
+  themeName: Default
+  themePreview: {fileID: 0}
+  floorTiles:
+  - {fileID: 11400000, guid: fc274041262d0cb45afdee431f79b50c, type: 2}
+  wallTiles:
+  - {fileID: 11400000, guid: b65060cbb435f254190c6e7f6ad5693d, type: 2}
+  decorationTiles:
+  - {fileID: 11400000, guid: 1f28b1dd3f7c223489db1fafa0340d67, type: 2}
+  ambientColor: {r: 1, g: 1, b: 1, a: 1}
+  roomColor: {r: 1, g: 1, b: 1, a: 1}
+  environmentProps: []
+  obstacles: []
+  commonEnemies:
+  - {fileID: 5126871807003600857, guid: 612c58211b0c6a646ba9ff7f601823cd, type: 3}
+  rareEnemies:
+  - {fileID: 4266600551737224889, guid: ef084f7ea4d30af4daddf20c0d1e80e1, type: 3}
+  bossEnemies:
+  - {fileID: 507372978903393368, guid: bb8d4c4778897fc428261cd497f253dd, type: 3}

@@ -3,49 +3,52 @@ using UnityEngine;
 public class Door : MonoBehaviour
 {
     [Header("Door Settings")]
-    public Room targetRoom;
+    public bool isOpen = false;
+    public bool isLocked = false;
     public Transform teleportPoint;
+    public float teleportOffset = 1.5f; // Khoảng cách dịch chuyển thêm theo hướng cửa
     
-    [Header("Visual")]
-    public SpriteRenderer doorSprite;
-    public Sprite openSprite;
-    public Sprite closedSprite;
+    [Header("Animation")]
+    public Animator animator;
+    public string openAnimationTrigger = "Open";
+    public string closeAnimationTrigger = "Close";
     
-    private bool isActive = false;
-    private BoxCollider2D doorTrigger;
+    [Header("References")]
+    public BoxCollider2D doorCollider;
+    public SpriteRenderer doorRenderer;
     
-    void Start()
+    private Room targetRoom;
+    
+    void Awake()
     {
-        doorTrigger = GetComponent<BoxCollider2D>();
-        if (doorSprite == null) doorSprite = GetComponent<SpriteRenderer>();
-        SetActive(false);
+        if (animator == null)
+            animator = GetComponent<Animator>();
+            
+        if (doorCollider == null)
+            doorCollider = GetComponent<BoxCollider2D>();
+            
+        if (doorRenderer == null)
+            doorRenderer = GetComponent<SpriteRenderer>();
     }
     
     public void SetActive(bool active)
     {
-        Debug.Log($"Door {gameObject.name} SetActive: {active}");
-        isActive = active;
+        // Không tắt GameObject, chỉ điều chỉnh trạng thái cửa
+        isOpen = active;
         
-        if (doorSprite != null)
+        if (doorCollider != null)
+            doorCollider.enabled = active;
+            
+        if (doorRenderer != null)
         {
-            doorSprite.sprite = active ? openSprite : closedSprite;
-            doorSprite.enabled = true;
-            doorSprite.color = active ? Color.white : Color.gray;
-            Debug.Log($"Door sprite updated: {doorSprite.sprite?.name}, enabled: {doorSprite.enabled}");
+            doorRenderer.enabled = true; // Luôn hiển thị cửa
+            doorRenderer.color = active ? Color.white : new Color(0.5f, 0.5f, 0.5f, 0.7f); // Màu xám nếu đóng
         }
-        else
-        {
-            Debug.LogWarning($"Door {gameObject.name} has no SpriteRenderer!");
-            // Tạo SpriteRenderer nếu chưa có
-            doorSprite = gameObject.AddComponent<SpriteRenderer>();
-            doorSprite.color = active ? Color.green : Color.red;
-            doorSprite.sortingOrder = 5;
-        }
-        
-        if (doorTrigger != null)
-            doorTrigger.enabled = active;
-        else
-            Debug.LogWarning($"Door {gameObject.name} has no BoxCollider2D!");
+            
+        if (animator != null && active)
+            animator.SetTrigger(openAnimationTrigger);
+            
+        Debug.Log($"Door {name} in {transform.parent?.name} set {(active ? "active" : "inactive")}");
     }
     
     public void SetTargetRoom(Room room)
@@ -55,26 +58,88 @@ public class Door : MonoBehaviour
     
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (!isActive || targetRoom == null) return;
+        if (!other.CompareTag("Player")) return;
         
-        if (other.CompareTag("Player"))
+        Debug.Log($"Player entered door trigger: {name}, isOpen: {isOpen}, isLocked: {isLocked}, teleportPoint: {(teleportPoint != null ? "valid" : "null")}, targetRoom: {(targetRoom != null ? targetRoom.name : "null")}");
+        
+        if (!isOpen || isLocked)
         {
-            TeleportPlayer(other.transform);
+            Debug.LogError($"Door {name} in {transform.parent?.name} is not open or is locked. isOpen: {isOpen}, isLocked: {isLocked}");
+            return;
+        }
+        
+        if (teleportPoint == null || targetRoom == null)
+        {
+            Debug.LogError($"Door {name} in {transform.parent?.name} has invalid teleport point or target room. teleportPoint: {teleportPoint}, targetRoom: {targetRoom}");
+            return;
+        }
+        
+        Debug.Log($"Door {name} teleport point position: {teleportPoint.position}, parent: {teleportPoint.parent?.name}");
+        
+        Debug.Log($"Player entering door {name} to room {targetRoom.name}");
+
+        // Cache player's rigidbody and disable it temporarily
+        var playerRb = other.GetComponent<Rigidbody2D>();
+        if (playerRb != null)
+        {
+            playerRb.simulated = false;
+        }
+
+        // Store player's relative velocity for momentum preservation
+        Vector2 relativeVelocity = playerRb != null ? playerRb.linearVelocity : Vector2.zero;
+
+        // Teleport player
+        // Tính toán vị trí teleport với offset
+        Vector3 direction = (teleportPoint.position - transform.position).normalized;
+        Vector3 teleportPosition = teleportPoint.position + direction * teleportOffset;
+        other.transform.position = teleportPosition;
+
+        // Restore player's momentum in the new room's orientation
+        if (playerRb != null)
+        {
+            playerRb.simulated = true;
+            playerRb.linearVelocity = relativeVelocity;
+        }
+
+        // Trigger room transition effects
+        StartCoroutine(RoomTransitionRoutine(targetRoom));
+    }
+
+    private System.Collections.IEnumerator RoomTransitionRoutine(Room newRoom)
+    {
+        // Let any transition effects play
+        yield return new WaitForSeconds(0.1f);
+
+        // Notify the target room that player has entered
+        newRoom.EnterRoom();
+
+        // Update current room in DungeonManager
+        if (DungeonManager.Instance != null)
+        {
+            DungeonManager.Instance.SetCurrentRoom(newRoom);
         }
     }
     
-    private void TeleportPlayer(Transform player)
+    public void Lock()
     {
-        if (teleportPoint != null)
-        {
-            player.position = teleportPoint.position;
-        }
-        else
-        {
-            player.position = targetRoom.transform.position;
-        }
+        isLocked = true;
         
-        targetRoom.EnterRoom();
-        DungeonManager.Instance?.SetCurrentRoom(targetRoom);
+        // Change appearance to locked door
+        if (doorRenderer != null)
+        {
+            // Change color or sprite to indicate locked state
+            doorRenderer.color = Color.red;
+        }
+    }
+    
+    public void Unlock()
+    {
+        isLocked = false;
+        
+        // Change appearance back to normal
+        if (doorRenderer != null)
+        {
+            doorRenderer.color = Color.white;
+        }
     }
 }

@@ -37,13 +37,15 @@ public class Room : MonoBehaviour
     {
         SetupRoom();
 
-        Room currentRoom = FindFirstObjectByType<Room>();
-        currentRoom.EnterRoom();
-        
-        // Nếu player đã có trong room từ đầu
-        if (GameObject.FindGameObjectWithTag("Player") != null)
+        if (roomType == RoomType.Start)
         {
-            Invoke(nameof(CheckPlayerInRoom), 0.1f);
+            EnterRoom();
+            
+            // Nếu player đã có trong room từ đầu
+            if (GameObject.FindGameObjectWithTag("Player") != null)
+            {
+                Invoke(nameof(CheckPlayerInRoom), 0.1f);
+            }
         }
     }
     
@@ -77,7 +79,7 @@ public class Room : MonoBehaviour
     
     public void EnterRoom()
     {
-        Debug.Log($"Entering room: {gameObject.name}, isVisited: {isVisited}");
+        Debug.Log($"Entering room: {gameObject.name}, isVisited: {isVisited}, isCleared: {isCleared}");
         
         if (!isVisited)
         {
@@ -85,7 +87,20 @@ public class Room : MonoBehaviour
             SpawnEnemies();
         }
         
-        UpdateDoors();
+        // Chỉ mở doors nếu room đã clear hoặc là Start room
+        if (isCleared || roomType == RoomType.Start)
+        {
+            UpdateDoors();
+        }
+        else
+        {
+            Debug.Log($"Room {gameObject.name} not cleared yet, doors remain closed");
+            // Đảm bảo doors đóng
+            foreach (var door in doors)
+            {
+                door.SetActive(false);
+            }
+        }
     }
     
     private void SpawnEnemies()
@@ -93,24 +108,39 @@ public class Room : MonoBehaviour
         if (enemiesSpawned || roomType == RoomType.Start || roomType == RoomType.Shop) return;
         
         Debug.Log($"Spawning enemies in {gameObject.name}. Enemy count: {enemies.Count}, Spawn points: {enemySpawnPoints?.Length}");
-        Debug.Log($"Room cleared, spawning {GetRewardCount()} rewards at {rewardSpawnPoint?.position}");
         
-        if (enemySpawnPoints != null && enemySpawnPoints.Length > 0)
+        if (enemySpawnPoints != null && enemySpawnPoints.Length > 0 && enemies.Count > 0)
         {
-            foreach (var spawnPoint in enemySpawnPoints)
+            int enemyCount = roomType == RoomType.Boss ? enemySpawnPoints.Length : 
+                           Random.Range(enemySpawnPoints.Length / 2, enemySpawnPoints.Length + 1);
+            
+            List<Transform> availableSpawnPoints = new List<Transform>(enemySpawnPoints);
+            
+            for (int i = 0; i < enemyCount; i++)
             {
-                if (enemies.Count > 0)
+                if (availableSpawnPoints.Count == 0) break;
+                
+                int spawnPointIndex = Random.Range(0, availableSpawnPoints.Count);
+                Transform spawnPoint = availableSpawnPoints[spawnPointIndex];
+                availableSpawnPoints.RemoveAt(spawnPointIndex);
+                
+                int enemyIndex = Random.Range(0, enemies.Count);
+                GameObject enemy = Instantiate(enemies[enemyIndex], spawnPoint.position, spawnPoint.rotation);
+                enemy.transform.SetParent(transform);
+                
+                // Scale boss enemies
+                if (roomType == RoomType.Boss)
                 {
-                    int randomIndex = Random.Range(0, enemies.Count);
-                    GameObject enemy = Instantiate(enemies[randomIndex], spawnPoint.position, spawnPoint.rotation);
-                    enemy.transform.SetParent(transform);
-                    Debug.Log($"Spawned {enemy.name} at {spawnPoint.position}");
+                    enemy.transform.localScale *= 1.5f;
+                    // Boss enemies will be scaled through their own component settings
                 }
+                
+                Debug.Log($"Spawned {enemy.name} at {spawnPoint.position}");
             }
         }
         else
         {
-            Debug.LogWarning($"No enemy spawn points found in {gameObject.name}!");
+            Debug.LogWarning($"No enemy spawn points or enemies found in {gameObject.name}!");
         }
         
         enemiesSpawned = true;
@@ -152,13 +182,37 @@ public class Room : MonoBehaviour
     {
         Debug.Log($"UpdateDoors: {doors.Count} doors, {connectedRooms.Count} connected rooms, isCleared: {isCleared}");
         
+        // Chỉ mở doors nếu room đã clear hoặc là Start room
+        if (!isCleared && roomType != RoomType.Start)
+        {
+            Debug.Log($"Room {gameObject.name} not cleared, doors remain closed");
+            return;
+        }
+        
+        // Kích hoạt tất cả các cửa có teleportPoint
+        foreach (Door door in doors)
+        {
+            if (door != null && door.teleportPoint != null)
+            {
+                Debug.Log($"Activating door {door.name} with teleport point");
+                door.SetActive(true);
+            }
+        }
+        
+        // Kích hoạt các cửa dựa trên connectedRooms
         for (int i = 0; i < doors.Count && i < connectedRooms.Count; i++)
         {
             if (connectedRooms[i] != null && doors[i] != null)
             {
                 Debug.Log($"Activating door {i} to room {connectedRooms[i].name}");
                 doors[i].SetActive(true);
-                doors[i].SetTargetRoom(connectedRooms[i]);
+                
+                // Chỉ đặt targetRoom nếu chưa được đặt
+                if (doors[i].teleportPoint == null)
+                {
+                    doors[i].SetTargetRoom(connectedRooms[i]);
+                    Debug.LogWarning($"Door {i} in {gameObject.name} had no teleport point, setting target room only");
+                }
             }
             else
             {
@@ -169,10 +223,40 @@ public class Room : MonoBehaviour
     
     public void ConnectToRoom(Room otherRoom, Door door)
     {
-        if (!connectedRooms.Contains(otherRoom))
+        // Kiểm tra xem phòng đã được kết nối chưa
+        int existingIndex = connectedRooms.IndexOf(otherRoom);
+        
+        if (existingIndex >= 0)
         {
+            // Nếu đã kết nối, cập nhật cửa
+            if (existingIndex < doors.Count)
+            {
+                doors[existingIndex] = door;
+                Debug.Log($"Updated door connection from {name} to {otherRoom.name}");
+            }
+            else
+            {
+                // Trường hợp bất thường: có phòng nhưng không có cửa
+                doors.Add(door);
+                Debug.LogWarning($"Room {name} had connection to {otherRoom.name} but no door, adding door");
+            }
+        }
+        else
+        {
+            // Thêm kết nối mới
             connectedRooms.Add(otherRoom);
             doors.Add(door);
+            Debug.Log($"Connected room {name} to {otherRoom.name} with door {door.name}");
+        }
+        
+        // Đảm bảo cửa có tham chiếu đến phòng đích
+        door.SetTargetRoom(otherRoom);
+        
+        // Kích hoạt cửa nếu phòng đã được clear hoặc là phòng bắt đầu
+        if (isCleared || roomType == RoomType.Start)
+        {
+            door.SetActive(true);
+            Debug.Log($"Activated door {door.name} in {name} to {otherRoom.name} because room is cleared or start room");
         }
     }
     

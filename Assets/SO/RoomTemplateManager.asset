@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4625ed943773dba46a8383af19b3f11e, type: 3}
+  m_Name: RoomTemplateManager
+  m_EditorClassIdentifier: Assembly-CSharp::RoomTemplateManager
+  normalRooms:
+    collectionName: 
+    templates:
+    - {fileID: 4214260867090849062, guid: a133be400c18fdb4aa3ce9216cb8a527, type: 3}
+  bossRooms:
+    collectionName: 
+    templates:
+    - {fileID: 4214260867090849062, guid: 204150b8f1831064ab1edfb76c7e1d45, type: 3}
+  treasureRooms:
+    collectionName: 
+    templates:
+    - {fileID: 4214260867090849062, guid: 115dded748664d342b414c5db00a3110, type: 3}
+  shopRooms:
+    collectionName: 
+    templates:
+    - {fileID: 4214260867090849062, guid: 2a029bfa85f06c04da373e0ad299ad4f, type: 3}
+  startRooms:
+    collectionName: 
+    templates:
+    - {fileID: 4214260867090849062, guid: 3e985541e976f8c44b8d19523c325d33, type: 3}
+  defaultNormalRoom: {fileID: 4214260867090849062, guid: a133be400c18fdb4aa3ce9216cb8a527, type: 3}
+  defaultBossRoom: {fileID: 4214260867090849062, guid: 204150b8f1831064ab1edfb76c7e1d45, type: 3}
+  defaultTreasureRoom: {fileID: 4214260867090849062, guid: 115dded748664d342b414c5db00a3110, type: 3}
+  defaultShopRoom: {fileID: 4214260867090849062, guid: 2a029bfa85f06c04da373e0ad299ad4f, type: 3}
+  defaultStartRoom: {fileID: 4214260867090849062, guid: 3e985541e976f8c44b8d19523c325d33, type: 3}

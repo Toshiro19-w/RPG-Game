@@ -191,7 +191,7 @@ GameObject:
   - component: {fileID: 120540380}
   - component: {fileID: 120540379}
   m_Layer: 0
-  m_Name: DungeonManager
+  m_Name: DungeonGenerator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
