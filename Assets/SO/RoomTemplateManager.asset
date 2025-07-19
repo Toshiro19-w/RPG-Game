@@ -19,21 +19,21 @@ MonoBehaviour:
   bossRooms:
     collectionName: 
     templates:
-    - {fileID: 4214260867090849062, guid: 204150b8f1831064ab1edfb76c7e1d45, type: 3}
+    - {fileID: 4214260867090849062, guid: d609d5b8071596d4f91357752ed9335c, type: 3}
   treasureRooms:
     collectionName: 
     templates:
-    - {fileID: 4214260867090849062, guid: 115dded748664d342b414c5db00a3110, type: 3}
+    - {fileID: 4214260867090849062, guid: f4e0822377bef034c89849a7b6981236, type: 3}
   shopRooms:
     collectionName: 
     templates:
-    - {fileID: 4214260867090849062, guid: 2a029bfa85f06c04da373e0ad299ad4f, type: 3}
+    - {fileID: 4214260867090849062, guid: 53bbbebc42a4bd8418974f9d13fc3bf9, type: 3}
   startRooms:
     collectionName: 
     templates:
-    - {fileID: 4214260867090849062, guid: 3e985541e976f8c44b8d19523c325d33, type: 3}
+    - {fileID: 4214260867090849062, guid: f874e105f5d80a348a5ed9fe7d1c16c3, type: 3}
   defaultNormalRoom: {fileID: 4214260867090849062, guid: a133be400c18fdb4aa3ce9216cb8a527, type: 3}
-  defaultBossRoom: {fileID: 4214260867090849062, guid: 204150b8f1831064ab1edfb76c7e1d45, type: 3}
-  defaultTreasureRoom: {fileID: 4214260867090849062, guid: 115dded748664d342b414c5db00a3110, type: 3}
-  defaultShopRoom: {fileID: 4214260867090849062, guid: 2a029bfa85f06c04da373e0ad299ad4f, type: 3}
-  defaultStartRoom: {fileID: 4214260867090849062, guid: 3e985541e976f8c44b8d19523c325d33, type: 3}
+  defaultBossRoom: {fileID: 4214260867090849062, guid: d609d5b8071596d4f91357752ed9335c, type: 3}
+  defaultTreasureRoom: {fileID: 4214260867090849062, guid: f4e0822377bef034c89849a7b6981236, type: 3}
+  defaultShopRoom: {fileID: 4214260867090849062, guid: 53bbbebc42a4bd8418974f9d13fc3bf9, type: 3}
+  defaultStartRoom: {fileID: 4214260867090849062, guid: f874e105f5d80a348a5ed9fe7d1c16c3, type: 3}
