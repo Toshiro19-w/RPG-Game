@@ -31,51 +31,87 @@ public class Door : MonoBehaviour
             doorRenderer = GetComponent<SpriteRenderer>();
     }
     
+    void Start()
+    {
+        // Kiểm tra xem cửa có thể sử dụng được không
+        CheckDoorUsability();
+    }
+    
+    public bool CheckDoorUsability()
+    {
+        bool isUsable = teleportPoint != null && targetRoom != null;
+        
+        if (!isUsable && isOpen)
+        {
+            // Nếu cửa đang mở nhưng không thể sử dụng, đóng nó lại
+            isOpen = false;
+            
+            if (doorCollider != null)
+                doorCollider.enabled = false;
+                
+            if (doorRenderer != null)
+                doorRenderer.color = new Color(0.7f, 0.3f, 0.3f, 0.5f); // Màu đỏ nhạt để chỉ ra vấn đề
+                
+            Debug.LogWarning($"Door {name} in {transform.parent?.name} is not usable (no teleport point or target room)");
+        }
+        
+        return isUsable;
+    }
+    
     public void SetActive(bool active)
     {
         // Không tắt GameObject, chỉ điều chỉnh trạng thái cửa
         isOpen = active;
         
+        // Kiểm tra xem cửa có teleportPoint và targetRoom không
+        bool canBeActive = active && teleportPoint != null && targetRoom != null;
+        
         if (doorCollider != null)
-            doorCollider.enabled = active;
+            doorCollider.enabled = canBeActive;
             
         if (doorRenderer != null)
         {
-            doorRenderer.enabled = true; // Luôn hiển thị cửa
-            doorRenderer.color = active ? Color.white : new Color(0.5f, 0.5f, 0.5f, 0.7f); // Màu xám nếu đóng
+            // Chỉ hiển thị cửa nếu có thể kích hoạt hoặc đang đóng
+            doorRenderer.enabled = canBeActive || !active;
+            doorRenderer.color = canBeActive ? Color.white : new Color(0.5f, 0.5f, 0.5f, 0.7f); // Màu xám nếu đóng
         }
             
-        if (animator != null && active)
+        if (animator != null && canBeActive)
             animator.SetTrigger(openAnimationTrigger);
             
-        Debug.Log($"Door {name} in {transform.parent?.name} set {(active ? "active" : "inactive")}");
+        Debug.Log($"Door {name} in {transform.parent?.name} set {(canBeActive ? "active" : "inactive")} (requested: {active})");
     }
     
     public void SetTargetRoom(Room room)
     {
         targetRoom = room;
+        
+        // Kiểm tra lại xem cửa có thể sử dụng được không sau khi đặt targetRoom
+        if (room != null)
+            CheckDoorUsability();
     }
     
     void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.CompareTag("Player")) return;
         
-        Debug.Log($"Player entered door trigger: {name}, isOpen: {isOpen}, isLocked: {isLocked}, teleportPoint: {(teleportPoint != null ? "valid" : "null")}, targetRoom: {(targetRoom != null ? targetRoom.name : "null")}");
-        
-        if (!isOpen || isLocked)
+        // Kiểm tra nhanh xem cửa có thể sử dụng được không
+        if (!isOpen || isLocked || teleportPoint == null || targetRoom == null)
         {
-            Debug.LogError($"Door {name} in {transform.parent?.name} is not open or is locked. isOpen: {isOpen}, isLocked: {isLocked}");
+            // Vô hiệu hóa collider để tránh lỗi trong tương lai
+            if (doorCollider != null)
+                doorCollider.enabled = false;
+                
+            // Đổi màu cửa thành đỏ để chỉ ra vấn đề
+            if (doorRenderer != null)
+                doorRenderer.color = new Color(0.7f, 0.3f, 0.3f, 0.5f);
+                
+            Debug.LogWarning($"Door {name} in {transform.parent?.name} cannot be used. isOpen: {isOpen}, isLocked: {isLocked}, teleportPoint: {teleportPoint}, targetRoom: {targetRoom}");
             return;
         }
         
-        if (teleportPoint == null || targetRoom == null)
-        {
-            Debug.LogError($"Door {name} in {transform.parent?.name} has invalid teleport point or target room. teleportPoint: {teleportPoint}, targetRoom: {targetRoom}");
-            return;
-        }
-        
+        Debug.Log($"Player entered door trigger: {name}, isOpen: {isOpen}, isLocked: {isLocked}, teleportPoint: valid, targetRoom: {targetRoom.name}");
         Debug.Log($"Door {name} teleport point position: {teleportPoint.position}, parent: {teleportPoint.parent?.name}");
-        
         Debug.Log($"Player entering door {name} to room {targetRoom.name}");
 
         // Cache player's rigidbody and disable it temporarily
