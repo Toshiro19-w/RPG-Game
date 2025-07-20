@@ -19,7 +19,7 @@ public class SkillCooldownUI : MonoBehaviour
     void Start()
     {
         // Tìm PlayerCombat script trong scene
-        playerCombat = FindObjectOfType<PlayerCombat>();
+        playerCombat = FindAnyObjectByType<PlayerCombat>();
         if (playerCombat == null)
         {
             Debug.LogError("PlayerCombat script not found in the scene!");

@@ -86,10 +86,10 @@ namespace InfinityMap
         private void UpdateUI()
         {
             if (scoreText != null)
-                scoreText.text = $"Score: {currentScore:N0}";
+                scoreText.text = $"Score \n{currentScore:N0}";
             
             if (highScoreText != null)
-                highScoreText.text = $"High Score: {highScore:N0}";
+                highScoreText.text = $"High Score {highScore:N0}";
         }
         
         private void LoadHighScore()

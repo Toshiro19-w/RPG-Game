@@ -6,12 +6,13 @@ public class Menu : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public void play()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 2);
+        PlayerPrefs.SetString("NextSceneToLoad", "Lobby"); // "Lobby" là tên scene bạn muốn tải sau Loading
+        SceneManager.LoadScene("Loading");
     }
 
     public void Opption()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene("Setting");
     }
     // Update is called once per frame
     public void Quit()
