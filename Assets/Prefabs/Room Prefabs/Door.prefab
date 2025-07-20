@@ -107,7 +107,7 @@ MonoBehaviour:
   isOpen: 0
   isLocked: 0
   teleportPoint: {fileID: 0}
-  teleportOffset: 1.5
+  teleportOffset: 3
   animator: {fileID: 0}
   openAnimationTrigger: Open
   closeAnimationTrigger: Close
