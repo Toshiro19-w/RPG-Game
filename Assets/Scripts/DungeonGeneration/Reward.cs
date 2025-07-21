@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 public class Reward : MonoBehaviour
 {
     [Header("Reward Settings")]
@@ -104,7 +105,10 @@ public class Reward : MonoBehaviour
         switch (rewardData.rewardType)
         {
             case RewardData.RewardType.Coin:
-                Debug.Log($"Collected {rewardValue} coins!");
+                if (player.TryGetComponent<PlayerWallet>(out var wallet))
+                {
+                    wallet.AddCoins(rewardValue);
+                }
                 break;
                 
             case RewardData.RewardType.Health:
