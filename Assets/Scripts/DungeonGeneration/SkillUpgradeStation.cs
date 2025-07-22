@@ -1,27 +1,47 @@
+// SkillUpgradeStation.cs (Phiên bản đã sửa)
+
 using UnityEngine;
+
 public class SkillUpgradeStation : MonoBehaviour
 {
     [SerializeField] private GameObject upgradePanel;
     private bool playerIsNear = false;
+    void Start()
+    {
+        if (upgradePanel == null)
+        {
+            UpgradePanelManager panelManager = FindObjectOfType<UpgradePanelManager>(true);
 
-    void Start() => upgradePanel?.SetActive(false);
+            if (panelManager != null)
+            {
+                upgradePanel = panelManager.gameObject;
+                Debug.Log("SkillUpgradeStation đã tự động tìm thấy UpgradeUIPanel!");
+            }
+            else
+            {
+                Debug.LogError("KHÔNG TÌM THẤY UpgradeUIPanel trong Scene! Hãy chắc chắn nó tồn tại và có script UpgradePanelManager.");
+            }
+        }
+        upgradePanel?.SetActive(false); 
+    }
 
     void Update()
     {
-        if (playerIsNear && Input.GetKeyDown(KeyCode.B))
+        if (playerIsNear && Input.GetKeyDown(KeyCode.B) && upgradePanel != null)
         {
             bool isActive = !upgradePanel.activeSelf;
             upgradePanel.SetActive(isActive);
-            Time.timeScale = isActive ? 0f : 1f; // Dừng/Chạy game
+            Time.timeScale = isActive ? 0f : 1f;
         }
     }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player")) playerIsNear = true;
     }
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && upgradePanel != null)
         {
             playerIsNear = false;
             upgradePanel.SetActive(false);
