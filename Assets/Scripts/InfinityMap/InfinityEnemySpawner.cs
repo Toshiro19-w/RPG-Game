@@ -19,9 +19,13 @@ namespace InfinityMap
     
     public class InfinityEnemySpawner : MonoBehaviour
     {
+        [Header("Wave Spawn Settings")]
+        [SerializeField] private int initialWaveSize = 20; // Số lượng enemy trong đợt đầu tiên
+        [SerializeField] private float waveMultiplier = 1.5f; // Hệ số nhân số lượng enemy mỗi đợt
+        [SerializeField] private float timeBetweenWaves = 12f; // Thời gian nghỉ giữa các đợt (giây)
+        [SerializeField] private float enemySpawnInterval = 1f; // Thời gian giữa mỗi lần spawn enemy trong đợt
+        
         [Header("Spawn Settings")]
-        [SerializeField] private float baseSpawnRate = 3f; // Thời gian spawn cơ bản (giây)
-        [SerializeField] private int baseMaxEnemies = 10; // Số enemy tối đa cơ bản
         [SerializeField] private float spawnRadius = 15f; // Bán kính spawn xung quanh player
         [SerializeField] private float minDistanceFromPlayer = 8f; // Khoảng cách tối thiểu từ player
         [SerializeField] private float maxDistanceFromPlayer = 20f; // Khoảng cách tối đa từ player
@@ -41,8 +45,11 @@ namespace InfinityMap
         private Transform player;
         private List<GameObject> spawnedEnemies = new List<GameObject>();
         private Coroutine spawnCoroutine;
-        private float currentSpawnRate;
-        private int currentMaxEnemies;
+        private int currentWaveNumber = 1;
+        private int currentWaveSize;
+        private int enemiesRemainingInWave;
+        private bool isWaveActive = false;
+        private bool isWaitingForNextWave = false;
         
         // Tilemap bounds
         private BoundsInt tilemapBounds;
@@ -51,7 +58,23 @@ namespace InfinityMap
         void Start()
         {
             InitializeSpawner();
-            StartSpawning();
+            
+            // Tìm WaveCountdownUI nếu có
+            FindWaveCountdownUI();
+            
+            // Nếu có WaveCountdownUI, để nó bắt đầu đếm ngược
+            // WaveCountdownUI sẽ gọi ResumeSpawning khi đếm ngược kết thúc
+            if (waveCountdownUI != null)
+            {
+                // Gọi StartInitialCountdown để bắt đầu đếm ngược ban đầu
+                waveCountdownUI.StartInitialCountdown();
+                // Không cần gọi StartSpawning() vì WaveCountdownUI sẽ gọi
+            }
+            else
+            {
+                // Nếu không có WaveCountdownUI, bắt đầu spawn ngay
+                StartSpawning();
+            }
         }
         
         private void InitializeSpawner()
@@ -59,12 +82,6 @@ namespace InfinityMap
             FindPlayer();
             CalculateTilemapBounds();
             UpdateSpawnSettings();
-            
-            // Subscribe to level events
-            if (PlayerLevel.Instance != null)
-            {
-                PlayerLevel.OnLevelUp += OnPlayerLevelUp;
-            }
         }
         
         private void FindPlayer()
@@ -115,23 +132,12 @@ namespace InfinityMap
         
         private void UpdateSpawnSettings()
         {
-            if (PlayerLevel.Instance != null)
-            {
-                currentSpawnRate = PlayerLevel.Instance.GetEnemySpawnRate(baseSpawnRate);
-                currentMaxEnemies = PlayerLevel.Instance.GetMaxEnemyCount(baseMaxEnemies);
-            }
-            else
-            {
-                currentSpawnRate = baseSpawnRate;
-                currentMaxEnemies = baseMaxEnemies;
-            }
+            // Tính toán kích thước của đợt hiện tại dựa trên số đợt và hệ số nhân
+            currentWaveSize = Mathf.RoundToInt(initialWaveSize * Mathf.Pow(waveMultiplier, currentWaveNumber - 1));
+            Debug.Log($"Wave {currentWaveNumber}: Size = {currentWaveSize} enemies");
         }
         
-        private void OnPlayerLevelUp(int newLevel)
-        {
-            UpdateSpawnSettings();
-            Debug.Log($"Player level up! New spawn rate: {currentSpawnRate:F2}s, Max enemies: {currentMaxEnemies}");
-        }
+
         
         private void StartSpawning()
         {
@@ -139,26 +145,91 @@ namespace InfinityMap
             {
                 StopCoroutine(spawnCoroutine);
             }
-            spawnCoroutine = StartCoroutine(SpawnRoutine());
+            
+            // Khởi tạo đợt đầu tiên
+            currentWaveNumber = 1;
+            UpdateSpawnSettings();
+            spawnCoroutine = StartCoroutine(WaveSpawnRoutine());
         }
         
-        private IEnumerator SpawnRoutine()
+        private WaveCountdownUI waveCountdownUI;
+        
+        private void FindWaveCountdownUI()
+        {
+            if (waveCountdownUI == null)
+            {
+                waveCountdownUI = FindAnyObjectByType<WaveCountdownUI>();
+            }
+        }
+        
+        private IEnumerator WaveSpawnRoutine()
+        {
+            // Tìm WaveCountdownUI nếu có
+            FindWaveCountdownUI();
+            
+            while (true)
+            {
+                // Bắt đầu đợt mới
+                isWaveActive = true;
+                isWaitingForNextWave = false;
+                enemiesRemainingInWave = currentWaveSize;
+                
+                Debug.Log($"Starting Wave {currentWaveNumber} with {enemiesRemainingInWave} enemies");
+                
+                // Spawn từng enemy trong đợt
+                for (int i = 0; i < currentWaveSize; i++)
+                {
+                    if (player != null)
+                    {
+                        SpawnRandomEnemy();
+                        yield return new WaitForSeconds(enemySpawnInterval);
+                    }
+                    else
+                    {
+                        // Tìm lại player nếu không tìm thấy
+                        FindPlayer();
+                        yield return new WaitForSeconds(1f);
+                        i--; // Thử lại
+                    }
+                }
+                
+                // Chờ cho đến khi tất cả enemy trong đợt bị tiêu diệt
+                yield return StartCoroutine(WaitForWaveCompletion());
+                
+                // Nghỉ giữa các đợt
+                isWaitingForNextWave = true;
+                Debug.Log($"Wave {currentWaveNumber} completed! Waiting {timeBetweenWaves} seconds until next wave...");
+                
+                // Hiển thị đếm ngược cho đợt tiếp theo
+                if (waveCountdownUI != null)
+                {
+                    waveCountdownUI.StartNextWaveCountdown();
+                }
+                
+                yield return new WaitForSeconds(timeBetweenWaves);
+                
+                // Chuẩn bị cho đợt tiếp theo
+                currentWaveNumber++;
+                UpdateSpawnSettings();
+            }
+        }
+        
+        private IEnumerator WaitForWaveCompletion()
         {
             while (true)
             {
-                yield return new WaitForSeconds(currentSpawnRate);
-                
-                // Update spawn settings in case level changed
-                UpdateSpawnSettings();
-                
-                // Check if we can spawn more enemies
                 CleanupDestroyedEnemies();
                 
-                if (spawnedEnemies.Count < currentMaxEnemies && player != null)
+                if (spawnedEnemies.Count == 0)
                 {
-                    SpawnRandomEnemy();
+                    // Tất cả enemy đã bị tiêu diệt
+                    break;
                 }
+                
+                yield return new WaitForSeconds(1f);
             }
+            
+            isWaveActive = false;
         }
         
         private void CleanupDestroyedEnemies()
@@ -263,17 +334,11 @@ namespace InfinityMap
             InfinityEnemy enemy = enemyObject.GetComponent<InfinityEnemy>();
             if (enemy == null) return;
             
-            int currentLevel = PlayerLevel.Instance != null ? PlayerLevel.Instance.GetCurrentLevel() : 1;
-            
-            // Chỉ scale exp reward, health và damage sẽ được quản lý bởi EnemyHealth và Attack scripts
-            int scaledExp = Mathf.RoundToInt(data.baseExpReward * Mathf.Pow(expScaling, currentLevel - 1));
-            
             // Apply settings
             enemy.SetEnemyType(data.enemyType);
-            enemy.SetExpReward(scaledExp);
+            enemy.SetExpReward(data.baseExpReward);
             
             // Health và damage scaling sẽ được handle bởi EnemyHealth và Attack components
-            // Có thể thêm level scaling logic riêng trong các script đó nếu cần
         }
         
         void OnDrawGizmosSelected()
@@ -309,12 +374,6 @@ namespace InfinityMap
         
         void OnDestroy()
         {
-            // Unsubscribe from events
-            if (PlayerLevel.Instance != null)
-            {
-                PlayerLevel.OnLevelUp -= OnPlayerLevelUp;
-            }
-            
             if (spawnCoroutine != null)
             {
                 StopCoroutine(spawnCoroutine);
@@ -354,7 +413,10 @@ namespace InfinityMap
             return spawnedEnemies.Count;
         }
         
-        public int GetMaxEnemyCount() => currentMaxEnemies;
-        public float GetCurrentSpawnRate() => currentSpawnRate;
+        public int GetCurrentWaveNumber() => currentWaveNumber;
+        public int GetCurrentWaveSize() => currentWaveSize;
+        public bool IsWaveActive() => isWaveActive;
+        public bool IsWaitingForNextWave() => isWaitingForNextWave;
+        public int GetEnemiesRemainingInWave() => enemiesRemainingInWave;
     }
 }

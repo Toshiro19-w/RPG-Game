@@ -2,9 +2,6 @@ using UnityEngine;
 
 namespace InfinityMap
 {
-    /// <summary>
-    /// Utility script để debug và fix các vấn đề Unity Inspector
-    /// </summary>
     public class InfinityMapDebugger : MonoBehaviour
     {
         [Header("Debug Tools")]
@@ -23,38 +20,34 @@ namespace InfinityMap
                 FixNullReferences();
             }
         }
-        
+
         private void DebugSystemComponents()
         {
             Debug.Log("=== Infinity Map System Debug ===");
-            
-            // Check PlayerLevel
-            var playerLevel = FindFirstObjectByType<PlayerLevel>();
-            Debug.Log($"PlayerLevel found: {playerLevel != null}");
-            
+
             // Check Player
             var player = GameObject.FindGameObjectWithTag("Player");
             Debug.Log($"Player GameObject found: {player != null}");
-            
+
             if (player != null)
             {
                 var playerHealth = player.GetComponent<PlayerHealth>();
                 Debug.Log($"PlayerHealth component found: {playerHealth != null}");
-                
+
                 if (playerHealth != null)
                 {
                     Debug.Log($"Player Health: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}");
                 }
             }
-            
+
             // Check Enemy Spawner
             var spawner = FindFirstObjectByType<InfinityEnemySpawner>();
             Debug.Log($"InfinityEnemySpawner found: {spawner != null}");
-            
+
             // Check Manager
             var manager = FindFirstObjectByType<InfinityMapManager>();
             Debug.Log($"InfinityMapManager found: {manager != null}");
-            
+
             Debug.Log("=== Debug Complete ===");
         }
         
@@ -103,15 +96,7 @@ namespace InfinityMap
             }
         }
         
-        [ContextMenu("Add Test EXP")]
-        public void AddTestExp()
-        {
-            if (PlayerLevel.Instance != null)
-            {
-                PlayerLevel.Instance.AddExp(50);
-                Debug.Log("Added 50 EXP for testing!");
-            }
-        }
+
         
         void OnDrawGizmosSelected()
         {

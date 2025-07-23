@@ -13,7 +13,7 @@ namespace InfinityMap
         
         [Header("References")]
         [SerializeField] private InfinityEnemySpawner enemySpawner;
-        [SerializeField] private PlayerLevel playerLevel;
+        [SerializeField] private RewardSystem rewardSystem;
         // PlayerHealth sẽ được tìm từ Player GameObject
         
         [Header("UI References")]
@@ -23,7 +23,6 @@ namespace InfinityMap
         [Header("Game Settings")]
         [SerializeField] private bool pauseOnPlayerDeath = true;
         [SerializeField] private float gameOverDelay = 2f;
-        
         // Game state
         private bool isPaused = false;
         private float gameTime = 0f;
@@ -49,17 +48,23 @@ namespace InfinityMap
             InitializeGame();
             SubscribeToEvents();
         }
-        
+
         private void SetupReferences()
         {
             // Auto-find references if not assigned
             if (enemySpawner == null)
                 enemySpawner = FindFirstObjectByType<InfinityEnemySpawner>();
-            
-            if (playerLevel == null)
-                playerLevel = FindFirstObjectByType<PlayerLevel>();
-            
-            // PlayerHealth sẽ được tìm từ Player GameObject khi cần
+
+            if (rewardSystem == null)
+                rewardSystem = FindFirstObjectByType<RewardSystem>();
+
+            // Tạo RewardSystem nếu không tìm thấy
+            if (rewardSystem == null)
+            {
+                GameObject rewardSystemObj = new GameObject("RewardSystem");
+                rewardSystem = rewardSystemObj.AddComponent<RewardSystem>();
+                Debug.Log("Created RewardSystem automatically");
+            }
         }
         
         private void InitializeGame()
@@ -82,9 +87,6 @@ namespace InfinityMap
         {
             // Subscribe to player death - sử dụng PlayerHealth từ folder Player
             // PlayerHealth.OnPlayerDeath += OnPlayerDeath; // Cần kiểm tra event này có tồn tại không
-            
-            // Subscribe to level up
-            PlayerLevel.OnLevelUp += OnPlayerLevelUp;
         }
         
         void Update()
@@ -114,19 +116,7 @@ namespace InfinityMap
             }
         }
         
-        private void OnPlayerLevelUp(int newLevel)
-        {
-            Debug.Log($"Player reached level {newLevel}!");
-            
-            // You can add special effects, notifications, etc. here
-            ShowLevelUpEffect();
-        }
-        
-        private void ShowLevelUpEffect()
-        {
-            // Add level up visual/audio effects here
-            Debug.Log("Level Up Effect!");
-        }
+
         
         private void ShowGameOver()
         {
@@ -141,6 +131,12 @@ namespace InfinityMap
             if (enemySpawner != null)
             {
                 enemySpawner.StopSpawning();
+            }
+
+            // Cleanup all rewards
+            if (rewardSystem != null)
+            {
+                rewardSystem.CleanupAllRewards();
             }
             
             Time.timeScale = 0f;
@@ -168,12 +164,20 @@ namespace InfinityMap
         
         public void RestartGame()
         {
+            if (rewardSystem != null)
+            {
+                rewardSystem.CleanupAllRewards();
+            }
             Time.timeScale = 1f;
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
         
         public void QuitToMenu()
         {
+            if (rewardSystem != null)
+            {
+                rewardSystem.CleanupAllRewards();
+            }
             Time.timeScale = 1f;
             // Load main menu scene - adjust scene name as needed
             SceneManager.LoadScene("MainMenu");
@@ -199,7 +203,6 @@ namespace InfinityMap
         }
         
         public InfinityEnemySpawner GetEnemySpawner() => enemySpawner;
-        public PlayerLevel GetPlayerLevel() => playerLevel;
         
         public global::PlayerHealth GetPlayerHealth()
         {
@@ -211,7 +214,12 @@ namespace InfinityMap
         {
             // Unsubscribe from events
             // PlayerHealth.OnPlayerDeath -= OnPlayerDeath; // Comment vì event có thể không tồn tại
-            PlayerLevel.OnLevelUp -= OnPlayerLevelUp;
+
+            // Cleanup all rewards before destroying
+            if (rewardSystem != null)
+            {
+                rewardSystem.CleanupAllRewards();
+            }
         }
         
         void OnApplicationPause(bool pauseStatus)

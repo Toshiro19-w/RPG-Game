@@ -358,7 +358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 696ac1228e6615b4b86408fbffd0a4bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InfinityMap.InfinitySkeletonAttack
-  bulletPrefab: {fileID: 1317231576205026155, guid: 3e62ff13b590ee94f95275ccd95cdbea, type: 3}
+  bulletPrefab: {fileID: 1317231576205026155, guid: 48c9f5b11c06cc74cab2c4c741375f29, type: 3}
   firePoint: {fileID: 1644554266648772709}
   fireRate: 1
   fireSpeed: 5
