@@ -71,6 +71,12 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             RewardSystem.Instance.SpawnRewards(transform.position);
         }
         
+        // Thông báo nếu đây là boss
+        if (CompareTag("Boss") && BossManager.Instance != null)
+        {
+            BossManager.IsBossDefeated = true;
+        }
+        
         Destroy(gameObject);
     }
 }

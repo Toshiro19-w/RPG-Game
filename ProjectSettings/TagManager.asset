@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Enemy
   - Wall
+  - Reward
+  - Boss
   layers:
   - Default
   - TransparentFX
@@ -22,7 +24,7 @@ TagManager:
   - EnemyProjectile
   - Neutral
   - nextMap
-  - 
+  - Boss
   - 
   - 
   - 

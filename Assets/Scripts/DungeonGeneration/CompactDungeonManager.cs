@@ -89,6 +89,10 @@ public class CompactDungeonManager : MonoBehaviour
     {
         dungeonSeed = seed;
         Random.InitState(dungeonSeed);
+        
+        // Reset boss defeated status
+        BossManager.IsBossDefeated = false;
+        
         StartCoroutine(GenerateDungeonWithProgress());
     }
     
