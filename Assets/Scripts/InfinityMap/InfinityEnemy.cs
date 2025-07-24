@@ -83,12 +83,6 @@ namespace InfinityMap
             if (isDead) return;
             isDead = true;
             
-            // Award experience to player
-            if (PlayerLevel.Instance != null)
-            {
-                PlayerLevel.Instance.AddExp(currentExpReward);
-            }
-            
             // Award score using PlayerScore system
             if (PlayerScore.Instance != null)
             {
@@ -101,13 +95,19 @@ namespace InfinityMap
                 InfinityMapManager.Instance.OnEnemyKilled();
             }
             
+            // Spawn rewards
+            if (RewardSystem.Instance != null)
+            {
+                RewardSystem.Instance.SpawnRewards(transform.position);
+            }
+            
             // Show death effect
             if (deathEffect != null)
             {
                 Instantiate(deathEffect, transform.position, Quaternion.identity);
             }
             
-            Debug.Log($"{enemyType} died and awarded {currentExpReward} exp and {currentScoreReward} score!");
+            Debug.Log($"{enemyType} died and awarded {currentScoreReward} score!");
             
             CancelInvoke(nameof(CheckIfDead));
         }

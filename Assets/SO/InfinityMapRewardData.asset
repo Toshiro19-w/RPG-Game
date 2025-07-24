@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f00c5887e19a6be44afe3e8b101c017f, type: 3}
+  m_Name: InfinityMapRewardData
+  m_EditorClassIdentifier: Assembly-CSharp::RewardDropData
+  possibleRewards:
+  - rewardPrefab: {fileID: 1455112540082834864, guid: f569cb1487ffada4e8004a63959ff330, type: 3}
+    dropChance: 100
+    minAmount: 1
+    maxAmount: 3
+  - rewardPrefab: {fileID: 1455112540082834864, guid: 13b39706c36c5fc40b1c752ff7c72586, type: 3}
+    dropChance: 100
+    minAmount: 1
+    maxAmount: 1
+  coinReward:
+    rewardPrefab: {fileID: 0}
+    dropChance: 0
+    minAmount: 1
+    maxAmount: 1

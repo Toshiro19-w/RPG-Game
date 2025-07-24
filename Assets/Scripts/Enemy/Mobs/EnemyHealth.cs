@@ -65,6 +65,12 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (deathEffect != null)
             Instantiate(deathEffect, transform.position, transform.rotation);
             
+        // Spawn rewards before destroying
+        if (RewardSystem.Instance != null)
+        {
+            RewardSystem.Instance.SpawnRewards(transform.position);
+        }
+        
         Destroy(gameObject);
     }
 }
