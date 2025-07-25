@@ -340,9 +340,35 @@ public class DungeonManager : MonoBehaviour
         }
     }
     
-    public void SetCurrentRoom(Room room)
+     public void SetCurrentRoom(Room newRoom)
     {
-        currentRoom = room;
+        // Nếu không có gì thay đổi (người chơi vẫn ở trong phòng cũ), không làm gì cả
+        if (newRoom == currentRoom)
+        {
+            return;
+        }
+
+        // Cập nhật phòng hiện tại
+        currentRoom = newRoom;
+        
+        // Đánh dấu phòng này đã được "Ghé thăm" (Visited)
+        currentRoom.isVisited = true;
+
+        // Đánh dấu phòng này đã được "Phát hiện" (Discovered) trên bản đồ
+        currentRoom.isDiscovered = true;
+
+        // Vòng lặp qua TẤT CẢ các phòng kết nối với phòng hiện tại
+        foreach (Room connectedRoom in currentRoom.connectedRooms)
+        {
+            // Và cũng đánh dấu chúng là đã "Phát hiện"
+            // Việc này đảm bảo các phòng lân cận sẽ xuất hiện trên minimap
+            if(connectedRoom != null) 
+            {
+               connectedRoom.isDiscovered = true;
+            }
+        }
+        
+        Debug.Log($"Player entered {currentRoom.name}. Adjacent rooms are now discovered on the minimap.");
     }
     
     public void OpenNewRooms(Room clearedRoom)

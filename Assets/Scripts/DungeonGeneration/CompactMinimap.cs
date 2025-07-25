@@ -105,28 +105,29 @@ public class CompactMinimap : MonoBehaviour
         if (minimapTexture == null || dungeonManager == null)
             return;
         
-        // Xóa minimap
+        // Xóa minimap cũ để vẽ lại từ đầu
         int mapSize = dungeonGenerator.gridSize * pixelsPerRoom;
         Color[] pixels = new Color[mapSize * mapSize];
-        for (int i = 0; i < pixels.Length; i++)
-        {
-            pixels[i] = Color.clear;
-        }
+        for (int i = 0; i < pixels.Length; i++) pixels[i] = Color.clear;
         minimapTexture.SetPixels(pixels);
         
-        // Lấy phòng hiện tại
+        // Lấy phòng hiện tại của người chơi
         currentRoom = dungeonManager.GetCurrentRoom();
         
-        // Vẽ các phòng đã khám phá
+        // Lấy danh sách tất cả các phòng trong hầm ngục
         List<Room> allRooms = dungeonManager.GetAllRooms();
+        
+        // Vòng lặp qua tất cả các phòng và kiểm tra MỘT điều kiện duy nhất
         foreach (Room room in allRooms)
         {
-            if (room.isVisited || ShouldShowUnexploredRoom(room))
+            // Nếu phòng này đã TỪNG được phát hiện, hãy vẽ nó lên bản đồ
+            if (room != null && room.isDiscovered)
             {
                 DrawRoomOnMinimap(room);
             }
         }
         
+        // Áp dụng tất cả các thay đổi vào texture
         minimapTexture.Apply();
     }
     
