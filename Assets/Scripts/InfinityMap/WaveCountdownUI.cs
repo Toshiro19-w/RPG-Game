@@ -21,7 +21,7 @@ namespace InfinityMap
         private void Awake()
         {
             // Tìm enemy spawner
-            enemySpawner = FindObjectOfType<InfinityEnemySpawner>();
+            enemySpawner = FindAnyObjectByType<InfinityEnemySpawner>();
             
             if (enemySpawner == null)
             {

@@ -294,7 +294,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
   moveSpeed: 2
   detectionRange: 10
-  stoppingDistance: 1
+  stoppingDistance: 5
   wallLayerMask:
     serializedVersion: 2
     m_Bits: 128
@@ -348,4 +348,4 @@ MonoBehaviour:
   fireRate: 1
   fireSpeed: 5
   bulletLifetime: 5
-  shootingRange: 3
+  shootingRange: 5

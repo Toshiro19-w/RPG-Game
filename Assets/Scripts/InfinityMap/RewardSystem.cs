@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class RewardSystem : MonoBehaviour
 {
@@ -7,13 +8,13 @@ public class RewardSystem : MonoBehaviour
 
     [SerializeField] private RewardDropData rewardDropData;
     private List<GameObject> activeRewards = new List<GameObject>();
+    private bool isCleaningUp = false;
 
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -21,9 +22,14 @@ public class RewardSystem : MonoBehaviour
         }
     }
     
+    void Start()
+    {
+        SceneManager.sceneUnloaded += OnSceneUnloaded;
+    }
+    
     public void SpawnRewards(Vector3 position)
     {
-        if (rewardDropData == null) return;
+        if (rewardDropData == null || isCleaningUp) return;
         
         // Spawn regular rewards
         foreach (var rewardDrop in rewardDropData.possibleRewards)
@@ -67,22 +73,29 @@ public class RewardSystem : MonoBehaviour
                 }
             }
         }
+        
+        // Clean up null references
+        activeRewards.RemoveAll(reward => reward == null);
     }
 
     public void CleanupAllRewards()
     {
-        foreach (var reward in activeRewards)
+        if (isCleaningUp) return;
+        isCleaningUp = true;
+        
+        for (int i = activeRewards.Count - 1; i >= 0; i--)
         {
-            if (reward != null)
+            if (activeRewards[i] != null)
             {
-                reward.SetActive(false);
-                Destroy(reward);
+                DestroyImmediate(activeRewards[i]);
             }
         }
         activeRewards.Clear();
+        
+        isCleaningUp = false;
     }
 
-    void OnSceneUnloaded(UnityEngine.SceneManagement.Scene scene)
+    void OnSceneUnloaded(Scene scene)
     {
         CleanupAllRewards();
     }
@@ -94,11 +107,20 @@ public class RewardSystem : MonoBehaviour
 
     void OnDestroy() 
     {
-        CleanupAllRewards();
+        SceneManager.sceneUnloaded -= OnSceneUnloaded;
+        if (!isCleaningUp)
+        {
+            CleanupAllRewards();
+        }
     }
 
     void OnApplicationQuit()
     {
         CleanupAllRewards();
+    }
+    
+    public void RemoveReward(GameObject reward)
+    {
+        activeRewards.Remove(reward);
     }
 }

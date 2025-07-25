@@ -164,23 +164,29 @@ namespace InfinityMap
         
         public void RestartGame()
         {
-            if (rewardSystem != null)
-            {
-                rewardSystem.CleanupAllRewards();
-            }
-            Time.timeScale = 1f;
+            CleanupBeforeSceneChange();
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
         
         public void QuitToMenu()
         {
+            CleanupBeforeSceneChange();
+            SceneManager.LoadScene("MainMenu");
+        }
+        
+        private void CleanupBeforeSceneChange()
+        {
+            Time.timeScale = 1f;
+            
             if (rewardSystem != null)
             {
                 rewardSystem.CleanupAllRewards();
             }
-            Time.timeScale = 1f;
-            // Load main menu scene - adjust scene name as needed
-            SceneManager.LoadScene("MainMenu");
+            
+            if (enemySpawner != null)
+            {
+                enemySpawner.ClearAllEnemies();
+            }
         }
         
         public void OnEnemyKilled()
@@ -215,11 +221,7 @@ namespace InfinityMap
             // Unsubscribe from events
             // PlayerHealth.OnPlayerDeath -= OnPlayerDeath; // Comment vì event có thể không tồn tại
 
-            // Cleanup all rewards before destroying
-            if (rewardSystem != null)
-            {
-                rewardSystem.CleanupAllRewards();
-            }
+            CleanupBeforeSceneChange();
         }
         
         void OnApplicationPause(bool pauseStatus)

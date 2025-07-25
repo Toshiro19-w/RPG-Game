@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RewardDropData
   possibleRewards:
   - rewardPrefab: {fileID: 1455112540082834864, guid: f569cb1487ffada4e8004a63959ff330, type: 3}
-    dropChance: 100
+    dropChance: 40
     minAmount: 1
-    maxAmount: 3
+    maxAmount: 1
   - rewardPrefab: {fileID: 1455112540082834864, guid: 13b39706c36c5fc40b1c752ff7c72586, type: 3}
-    dropChance: 100
+    dropChance: 20
     minAmount: 1
     maxAmount: 1
   coinReward:

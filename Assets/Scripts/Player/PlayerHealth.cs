@@ -117,6 +117,10 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             Instantiate(deathEffect, transform.position, transform.rotation);
 
         Debug.Log("Player Died!");
+        
+        // Hiển thị Game Over Panel
+        GameOverController.ShowGameOver();
+        
         gameObject.SetActive(false);
     }
     

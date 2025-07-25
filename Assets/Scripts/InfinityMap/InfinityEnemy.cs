@@ -13,18 +13,16 @@ namespace InfinityMap
         [Header("Enemy Settings")]
         [SerializeField] private EnemyType enemyType;
         [SerializeField] private int expReward = 10;
-        [SerializeField] private int scoreReward = 5; // Thưởng điểm khi bị tiêu diệt
+        [SerializeField] private int scoreReward = 5;
 
         [Header("Visual Effects")]
         [SerializeField] private GameObject deathEffect;
 
-        // Components - sử dụng lại từ hệ thống cũ
         private InfinityEnemyMovement movement;
-        private EnemyHealth enemyHealth; // Sử dụng EnemyHealth cũ
-        private SkeletonAttack skeletonAttack; // Cho Skeleton
-        private SlimeAttack slimeAttack; // Cho Slime
+        private EnemyHealth enemyHealth;
+        private SkeletonAttack skeletonAttack;
+        private SlimeAttack slimeAttack;
 
-        // State
         private bool isDead = false;
         private int currentExpReward;
         private int currentScoreReward;
@@ -39,15 +37,11 @@ namespace InfinityMap
             currentExpReward = expReward;
             currentScoreReward = scoreReward;
 
-            // Safely get components
             movement = GetComponent<InfinityEnemyMovement>();
             enemyHealth = GetComponent<EnemyHealth>();
-
-            // Get attack components dựa vào enemy type
             skeletonAttack = GetComponent<SkeletonAttack>();
             slimeAttack = GetComponent<SlimeAttack>();
 
-            // Validate required components
             if (enemyHealth == null)
             {
                 enemyHealth = gameObject.AddComponent<EnemyHealth>();
@@ -58,23 +52,19 @@ namespace InfinityMap
                 movement = gameObject.AddComponent<InfinityEnemyMovement>();
             }
 
-            // Subscribe to death event của EnemyHealth
             if (enemyHealth != null)
             {
-                // Vì EnemyHealth cũ không có event, ta sẽ check trong Update
                 InvokeRepeating(nameof(CheckIfDead), 0.1f, 0.1f);
             }
         }
 
         private void CheckIfDead()
         {
-            if (isDead) return;
+            if (isDead || enemyHealth == null) return;
 
-            // Kiểm tra nếu GameObject bị destroy (EnemyHealth tự destroy khi chết)
-            if (this == null || gameObject == null)
+            if (GetCurrentHealth() <= 0)
             {
                 OnEnemyDeath();
-                return;
             }
         }
 
@@ -83,80 +73,63 @@ namespace InfinityMap
             if (isDead) return;
             isDead = true;
             
-            // Award score using PlayerScore system
+            CancelInvoke(nameof(CheckIfDead));
+            
             if (PlayerScore.Instance != null)
             {
                 PlayerScore.Instance.AddScoreFromEnemy(this);
             }
             
-            // Notify manager
             if (InfinityMapManager.Instance != null)
             {
                 InfinityMapManager.Instance.OnEnemyKilled();
             }
             
-            // Spawn rewards
-            if (RewardSystem.Instance != null)
+            if (RewardSystem.Instance != null && gameObject.scene.isLoaded)
             {
                 RewardSystem.Instance.SpawnRewards(transform.position);
             }
             
-            // Show death effect
             if (deathEffect != null)
             {
                 Instantiate(deathEffect, transform.position, Quaternion.identity);
             }
             
-            Debug.Log($"{enemyType} died and awarded {currentScoreReward} score!");
-            
-            CancelInvoke(nameof(CheckIfDead));
+            Destroy(gameObject);
         }
 
         void OnDestroy()
         {
-            if (!isDead)
-            {
-                OnEnemyDeath();
-            }
+            CancelInvoke(nameof(CheckIfDead));
         }
 
-        // Getters
         public EnemyType GetEnemyType() => enemyType;
         public bool IsDead() => isDead;
         public int GetExpReward() => currentExpReward;
         public int GetScoreReward() => currentScoreReward;
         public EnemyHealth GetEnemyHealth() => enemyHealth;
 
-        // Setters for spawner configuration
         public void SetEnemyType(EnemyType type) => enemyType = type;
         public void SetExpReward(int exp) => currentExpReward = exp;
         public void SetScoreReward(int score) => currentScoreReward = score;
 
-        // Scale health và damage thông qua EnemyHealth và Attack components
         public void SetMaxHealth(int health)
         {
             if (enemyHealth != null)
             {
                 try
                 {
-                    // EnemyHealth cũ không có public setter, ta sẽ dùng reflection
                     var healthField = typeof(EnemyHealth).GetField("maxHealth",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                    if (healthField != null)
-                    {
-                        healthField.SetValue(enemyHealth, health);
-                    }
+                    healthField?.SetValue(enemyHealth, health);
 
                     var currentHealthField = typeof(EnemyHealth).GetField("currentHealth",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                    if (currentHealthField != null)
-                    {
-                        currentHealthField.SetValue(enemyHealth, health);
-                    }
+                    currentHealthField?.SetValue(enemyHealth, health);
                 }
                 catch (System.Exception e)
                 {
-                    Debug.LogWarning($"Could not set health via reflection: {e.Message}");
+                    Debug.LogWarning($"Could not set health: {e.Message}");
                 }
             }
         }
@@ -165,21 +138,30 @@ namespace InfinityMap
         {
             try
             {
-                // Set damage cho attack components tương ứng
-                if (enemyType == EnemyType.Slime && slimeAttack != null)
+                switch (enemyType)
                 {
-                    var damageField = typeof(SlimeAttack).GetField("attackDamage",
-                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                    if (damageField != null)
-                    {
-                        damageField.SetValue(slimeAttack, damage);
-                    }
+                    case EnemyType.Slime:
+                        if (slimeAttack != null)
+                        {
+                            var damageField = typeof(SlimeAttack).GetField("attackDamage",
+                                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                            damageField?.SetValue(slimeAttack, damage);
+                        }
+                        break;
+                        
+                    case EnemyType.Skeleton:
+                        if (skeletonAttack != null)
+                        {
+                            var bulletDamageField = typeof(SkeletonAttack).GetField("bulletDamage",
+                                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                            bulletDamageField?.SetValue(skeletonAttack, damage);
+                        }
+                        break;
                 }
-                // Skeleton damage được set thông qua bullet damage, không cần modify ở đây
             }
             catch (System.Exception e)
             {
-                Debug.LogWarning($"Could not set damage via reflection: {e.Message}");
+                Debug.LogWarning($"Could not set damage: {e.Message}");
             }
         }
 
@@ -198,7 +180,7 @@ namespace InfinityMap
                 }
                 catch (System.Exception e)
                 {
-                    Debug.LogWarning($"Could not get current health via reflection: {e.Message}");
+                    Debug.LogWarning($"Could not get current health: {e.Message}");
                 }
             }
             return 0;
@@ -219,11 +201,10 @@ namespace InfinityMap
                 }
                 catch (System.Exception e)
                 {
-                    Debug.LogWarning($"Could not get max health via reflection: {e.Message}");
+                    Debug.LogWarning($"Could not get max health: {e.Message}");
                 }
             }
             return 0;
         }
-        
     }
 }

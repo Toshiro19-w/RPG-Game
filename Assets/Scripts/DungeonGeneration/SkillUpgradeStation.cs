@@ -6,6 +6,18 @@ public class SkillUpgradeStation : MonoBehaviour
 {
     [SerializeField] private GameObject upgradePanel;
     private bool playerIsNear = false;
+    private bool isAvailable = true;
+
+    public void SetAvailable(bool available)
+    {
+        isAvailable = available;
+        if (!available && upgradePanel != null && upgradePanel.activeSelf)
+        {
+            upgradePanel.SetActive(false);
+            Time.timeScale = 1f;
+        }
+    }
+
     void Start()
     {
         if (upgradePanel == null)
@@ -27,7 +39,7 @@ public class SkillUpgradeStation : MonoBehaviour
 
     void Update()
     {
-        if (playerIsNear && Input.GetKeyDown(KeyCode.B) && upgradePanel != null)
+        if (playerIsNear && isAvailable && Input.GetKeyDown(KeyCode.B) && upgradePanel != null)
         {
             bool isActive = !upgradePanel.activeSelf;
             upgradePanel.SetActive(isActive);

@@ -253,4 +253,9 @@ MonoBehaviour:
   attackCooldown: 2
   knockbackForce: 1
   knockbackDuration: 0.5
+  wallLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  wallCheckDistance: 0.8
+  safetyBuffer: 0.3
   enableDebugGizmos: 1
