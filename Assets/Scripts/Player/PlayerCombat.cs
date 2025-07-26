@@ -184,66 +184,50 @@ public class PlayerCombat : MonoBehaviour
         OnSkillUsed?.Invoke(data.key, data.cooldown);
     }
 
-    // Đặt vào trong file PlayerCombat.cs, thay thế hàm PerformAttack cũ
-
-private IEnumerator PerformAttack(string animationTrigger, GameObject projectilePrefab, float projectileSpeed)
-{
-    // 1. Đặt trạng thái "đang tấn công" và dừng di chuyển của người chơi
-    isAttacking = true;
-    playerMovement?.StopMovement(); // Dừng di chuyển ngay lập tức
-
-    // 2. Cài đặt các thông số cho Animator
-    Vector2 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-    Vector2 direction = (mousePosition - rb.position).normalized;
-
-    animator?.SetFloat("AttackX", direction.x);
-    animator?.SetFloat("AttackY", direction.y);
-    animator?.SetBool("isAttacking", true);
-    animator?.SetTrigger(animationTrigger);
-
-    // 3. Phát âm thanh và tạo viên đạn (nếu có)
-    if (projectilePrefab != null)
+    private IEnumerator PerformAttack(string animationTrigger, GameObject projectilePrefab, float projectileSpeed)
     {
-        // Kiểm tra loại chiêu để phát âm thanh tương ứng
-        if (animationTrigger.Contains("Fire")) 
+        isAttacking = true;
+        playerMovement?.StopMovement();
+        //... (phần đầu của hàm giữ nguyên) ...
+        Vector2 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 direction = (mousePosition - rb.position).normalized;
+        animator?.SetFloat("AttackX", direction.x);
+        animator?.SetFloat("AttackY", direction.y);
+        animator?.SetBool("isAttacking", true);
+        animator?.SetTrigger(animationTrigger);
+
+        if (projectilePrefab != null)
         {
-            AudioManager.Instance.Play("fire_ball");
-        }
-        else if (animationTrigger.Contains("Ice")) 
-        {
-            AudioManager.Instance.Play("arrow");
-        }
-        else if (animationTrigger.Contains("Melee")) // Thêm âm thanh cho đòn đánh thường nếu có
-        {
-            // AudioManager.Instance.Play("MeleeSound"); // Ví dụ
+            if (animationTrigger.Contains("Fire")) 
+            {
+                AudioManager.Instance.Play("fire_ball");
+            }
+            else if (animationTrigger.Contains("Ice")) 
+            {
+                AudioManager.Instance.Play("arrow");
+            }
+            GameObject projectile = Instantiate(projectilePrefab, rb.position, Quaternion.identity);
+            if (projectile.TryGetComponent<Rigidbody2D>(out var projectileRb))
+                projectileRb.linearVelocity = direction * projectileSpeed;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            projectile.transform.rotation = Quaternion.Euler(0, 0, angle);
         }
         
-        // Tạo viên đạn
-        GameObject projectile = Instantiate(projectilePrefab, rb.position, Quaternion.identity);
-        if (projectile.TryGetComponent<Rigidbody2D>(out var projectileRb))
-            projectileRb.linearVelocity = direction * projectileSpeed;
-        
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        projectile.transform.rotation = Quaternion.Euler(0, 0, angle);
-    }
-    
-    // 4. Kiểm tra nâng cấp để bắn lần thứ 2
-    KeyCode currentKey = GetKeyFromAnimationTrigger(animationTrigger);
-    if (currentKey != KeyCode.None && IsSkillUpgraded(currentKey))
-    {
-        StartCoroutine(DelayedAttack(0.2f, projectilePrefab, projectileSpeed));
-    }
+        // --- THÊM MỚI --- Kiểm tra nâng cấp để đánh lần thứ 2
+        KeyCode currentKey = GetKeyFromAnimationTrigger(animationTrigger);
+        if (currentKey != KeyCode.None && IsSkillUpgraded(currentKey))
+        {
+            StartCoroutine(DelayedAttack(0.2f, projectilePrefab, projectileSpeed));
+        }
 
-    // 5. Chờ cho animation tấn công kết thúc
-    yield return new WaitForSeconds(attackAnimationDuration);
+        yield return new WaitForSeconds(attackAnimationDuration);
 
-    // 6. Reset lại trạng thái và cho phép người chơi di chuyển trở lại
-    isAttacking = false;
-    animator?.SetBool("isAttacking", false);
-    animator?.SetFloat("AttackX", 0);
-    animator?.SetFloat("AttackY", 0);
-    playerMovement?.ResumeMovement(); // Cho phép di chuyển trở lại
-}
+        isAttacking = false;
+        animator?.SetBool("isAttacking", false);
+        animator?.SetFloat("AttackX", 0);
+        animator?.SetFloat("AttackY", 0);
+        playerMovement?.ResumeMovement();
+    }
 
     private IEnumerator PerformIceBarrage(string animationTrigger, GameObject projectilePrefab, float projectileSpeed)
     {
