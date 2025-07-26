@@ -8924,6 +8924,7 @@ MonoBehaviour:
   - {fileID: 1455112540082834864, guid: 38babea4fd2e4004980134b5591fe673, type: 3}
   - {fileID: 1455112540082834864, guid: 38babea4fd2e4004980134b5591fe673, type: 3}
   rewardSpawnPoint: {fileID: 6637991904772907188}
+  isDiscovered: 0
 --- !u!1 &6808227073444385227
 GameObject:
   m_ObjectHideFlags: 0
@@ -9087,6 +9088,22 @@ PrefabInstance:
     - target: {fileID: -3329898073697565711, guid: 7de7b67210017444ca1efbe915325731, type: 3}
       propertyPath: requireBossDefeat
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3329898073697565711, guid: 7de7b67210017444ca1efbe915325731, type: 3}
+      propertyPath: randomMapPool.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -3329898073697565711, guid: 7de7b67210017444ca1efbe915325731, type: 3}
+      propertyPath: 'randomMapPool.Array.data[0]'
+      value: Map 2 NEW
+      objectReference: {fileID: 0}
+    - target: {fileID: -3329898073697565711, guid: 7de7b67210017444ca1efbe915325731, type: 3}
+      propertyPath: 'randomMapPool.Array.data[1]'
+      value: Map 3 NEW
+      objectReference: {fileID: 0}
+    - target: {fileID: -3329898073697565711, guid: 7de7b67210017444ca1efbe915325731, type: 3}
+      propertyPath: 'randomMapPool.Array.data[2]'
+      value: Map 1 NEW
       objectReference: {fileID: 0}
     - target: {fileID: 4074687863789470037, guid: 7de7b67210017444ca1efbe915325731, type: 3}
       propertyPath: m_LocalPosition.x

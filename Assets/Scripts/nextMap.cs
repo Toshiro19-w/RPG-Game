@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class nextMap : MonoBehaviour
 {
@@ -8,6 +9,10 @@ public class nextMap : MonoBehaviour
     [SerializeField] private KeyCode interactKey = KeyCode.B;
     [SerializeField] private GameObject interactPrompt;
     [SerializeField] private GameObject portalVisual;
+
+    [Header("Random Map Pool")]
+    [Tooltip("Điền tên các Scene map bạn muốn dịch chuyển ngẫu nhiên tới vào đây.")]
+    [SerializeField] private List<string> randomMapPool = new List<string>();
     
     private bool playerInRange = false;
     
@@ -87,26 +92,27 @@ public class nextMap : MonoBehaviour
             Debug.Log("Không thể sử dụng portal! Hãy hạ gục boss trước.");
             return;
         }
+
+        // Kiểm tra xem danh sách map có rỗng không
+        if (randomMapPool.Count == 0)
+        {
+            Debug.LogError("Random Map Pool đang bị trống! Hãy gán tên các Scene map vào trong Inspector.");
+            return;
+        }
         
-        // Đặt flag để tạo dungeon mới
+        // Đặt flag để tạo dungeon mới (nếu cần)
         PlayerPrefs.SetInt("RegenerateDungeon", 1);
         
-        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        int nextSceneIndex = currentSceneIndex + 1;
-
-        if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
-        {
-            string nextSceneName = SceneUtility.GetScenePathByBuildIndex(nextSceneIndex);
-            nextSceneName = System.IO.Path.GetFileNameWithoutExtension(nextSceneName);
-
-            PlayerPrefs.SetString("NextSceneToLoad", nextSceneName);
-            SceneManager.LoadScene("Loading");
-        }
-        else
-        {
-            Debug.Log("Reached the last map. Transitioning to Lobby (or Game End Scene).");
-            PlayerPrefs.SetString("NextSceneToLoad", "Lobby");
-            SceneManager.LoadScene("Loading");
-        }
+        // --- LOGIC CHỌN MAP NGẪU NHIÊN ---
+        // 1. Lấy một chỉ số ngẫu nhiên từ 0 đến số lượng map trong danh sách - 1
+        int randomIndex = Random.Range(0, randomMapPool.Count);
+        
+        // 2. Lấy tên của map tại vị trí ngẫu nhiên đó
+        string nextSceneName = randomMapPool[randomIndex];
+        
+        // 3. Lưu tên map đã chọn và chuyển đến màn hình Loading
+        Debug.Log($"Đã chọn ngẫu nhiên map: {nextSceneName}. Đang chuyển cảnh...");
+        PlayerPrefs.SetString("NextSceneToLoad", nextSceneName);
+        SceneManager.LoadScene("Loading");
     }
 }

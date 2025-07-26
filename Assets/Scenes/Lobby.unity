@@ -125194,6 +125194,22 @@ PrefabInstance:
       propertyPath: requireBossDefeat
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3329898073697565711, guid: 7de7b67210017444ca1efbe915325731, type: 3}
+      propertyPath: randomMapPool.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -3329898073697565711, guid: 7de7b67210017444ca1efbe915325731, type: 3}
+      propertyPath: 'randomMapPool.Array.data[0]'
+      value: Map 1 NEW
+      objectReference: {fileID: 0}
+    - target: {fileID: -3329898073697565711, guid: 7de7b67210017444ca1efbe915325731, type: 3}
+      propertyPath: 'randomMapPool.Array.data[1]'
+      value: Map 2 NEW
+      objectReference: {fileID: 0}
+    - target: {fileID: -3329898073697565711, guid: 7de7b67210017444ca1efbe915325731, type: 3}
+      propertyPath: 'randomMapPool.Array.data[2]'
+      value: Map 3 NEW
+      objectReference: {fileID: 0}
     - target: {fileID: 4074687863789470037, guid: 7de7b67210017444ca1efbe915325731, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9.11

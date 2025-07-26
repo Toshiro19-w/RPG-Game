@@ -50,7 +50,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: a1bae2eb06d58dd4a854f5458a4d17fc, type: 3}
     isSfx: 1
     volume: 1
-    pitch: 1.65
+    pitch: 1.57
     loop: 0
     source: {fileID: 0}
   - name: arrows
