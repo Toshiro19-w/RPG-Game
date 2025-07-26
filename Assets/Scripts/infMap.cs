@@ -93,7 +93,7 @@ public class infMap : MonoBehaviour
         PlayerPrefs.SetInt("RegenerateDungeon", 1);
         
         // Lưu scene index 7 vào PlayerPrefs
-        PlayerPrefs.SetInt("NextSceneIndex", 7);
+        PlayerPrefs.SetInt("NextSceneIndex", 3);
         PlayerPrefs.Save();
         
         Debug.Log("Loading to scene index 7 via Loading screen...");
