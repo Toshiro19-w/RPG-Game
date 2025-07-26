@@ -108,6 +108,7 @@ public class Reward : MonoBehaviour
                 if (player.TryGetComponent<PlayerWallet>(out var wallet))
                 {
                     wallet.AddCoins(rewardValue);
+                    AudioManager.Instance.Play("pickupCoin");
                 }
                 break;
                 
@@ -115,6 +116,7 @@ public class Reward : MonoBehaviour
                 if (player.TryGetComponent<PlayerHealth>(out var health))
                 {
                     health.Heal(rewardValue);
+                    AudioManager.Instance.Play("heal");
                     Debug.Log($"Healed {rewardValue} HP!");
                 }
                 break;

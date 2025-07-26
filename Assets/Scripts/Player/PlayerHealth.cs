@@ -34,6 +34,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         if (isInvincible) return;
 
         currentHealth -= damage;
+        AudioManager.Instance.Play("dame");
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         // Safely update HP bar if it exists

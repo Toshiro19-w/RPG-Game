@@ -76,7 +76,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         {
             BossManager.IsBossDefeated = true;
         }
-        
+        AudioManager.Instance.Play("enemydead");
         Destroy(gameObject);
     }
 }

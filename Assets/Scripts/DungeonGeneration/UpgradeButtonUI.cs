@@ -25,6 +25,7 @@ public class UpgradeButtonUI : MonoBehaviour
 
     private void OnButtonClicked()
     {
+        AudioManager.Instance.Play("click");
         panelManager.AttemptUpgrade(assignedSkillKey);
     }
 }

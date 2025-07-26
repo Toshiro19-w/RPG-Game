@@ -121,6 +121,7 @@ public class UpgradePanelManager : MonoBehaviour
     // Hàm này được gọi bởi nút hồi máu khi được nhấn
     public void AttemptToHeal()
     {
+        AudioManager.Instance.Play("click");
         if (playerHealth == null || playerWallet == null) return;
 
         if (playerHealth.IsHealthFull())
